@@ -4,7 +4,7 @@ import qualified Data.Map as M
 import qualified Data.Text as T
 import Crom.Nutrients (Nutrient(..))
 import Crom.Units.Energy (Energy, as_kcal)
-import Crom.Units.Mass (Mass, to_kg, as_g, as_mg, as_ug)
+import Crom.Units.Mass (Mass, in_kg, as_g, as_mg, as_ug)
 import Crom.Units.Units ((.*), (.-))
 
 data Target
@@ -13,7 +13,7 @@ data Target
     | Bulk -- Build muscle.
 
 daily_kcal :: Target -> Mass -> Energy
-daily_kcal Maintain bodymass = as_kcal (35 * to_kg bodymass)
+daily_kcal Maintain bodymass = as_kcal (35 * in_kg bodymass)
 -- Stronglifts says 10-15% more than TDEE: https://stronglifts.com/gain-weight/#Can_I_gain_weight_without_gaining_fat
 -- Start with 10%, then increase as needed, to minimize fat gain.
 daily_kcal Bulk bodymass = 1.10 .* daily_kcal Maintain bodymass
@@ -54,7 +54,7 @@ protein_amino_ratios = M.fromList [
 -- For healthy adult male
 recommended_daily_intake :: Mass -> M.Map Nutrient RecommendedDailyIntake
 recommended_daily_intake bodymass =
-    let kg_bm = to_kg bodymass :: Float
+    let kg_bm = in_kg bodymass :: Float
         -- Convenience functions
         just_g :: Float -> Maybe Mass
         just_g = Just . as_g

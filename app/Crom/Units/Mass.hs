@@ -4,7 +4,7 @@ module Crom.Units.Mass (
     as_g,
     as_mg,
     as_ug,
-    to_kg
+    in_kg
 ) where
 
 import Crom.Units.Units
@@ -25,32 +25,32 @@ instance Show MassUnit where
 type Mass = Quantity MassUnit
 
 instance Unit MassUnit where
-    x `in_units_of` y = in_g x / in_g y where
-        in_g :: MassUnit -> Float
-        in_g U_kg = 1e+3
-        in_g U_g  = 1
-        in_g U_mg = 1e-3
-        in_g U_ug = 1e-6
-        in_g U_lb = 453.59237
+    x `in_units_of` y = in_grams x / in_grams y where
+        in_grams :: MassUnit -> Float
+        in_grams U_kg = 1e+3
+        in_grams U_g  = 1
+        in_grams U_mg = 1e-3
+        in_grams U_ug = 1e-6
+        in_grams U_lb = 453.59237
 
 -- Convenience conversion functions
 
-to_kg :: Mass -> Float
-to_kg = num . convert_to U_kg
+in_kg :: Mass -> Float
+in_kg = num . convert_to U_kg
 as_kg :: Float -> Mass
 as_kg x = Qty x U_kg
 
-to_g :: Mass -> Float
-to_g = num . convert_to U_g
+in_g :: Mass -> Float
+in_g = num . convert_to U_g
 as_g :: Float -> Mass
 as_g x = Qty x U_g
 
-to_mg :: Mass -> Float
-to_mg = num . convert_to U_mg
+in_mg :: Mass -> Float
+in_mg = num . convert_to U_mg
 as_mg :: Float -> Mass
 as_mg x = Qty x U_mg
 
-to_ug :: Mass -> Float
-to_ug = num . convert_to U_ug
+in_ug :: Mass -> Float
+in_ug = num . convert_to U_ug
 as_ug :: Float -> Mass
 as_ug x = Qty x U_ug
