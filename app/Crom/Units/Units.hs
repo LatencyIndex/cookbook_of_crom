@@ -23,6 +23,10 @@ class Unit a where
         -- kg `in_units_of` g = 1000
         in_units_of :: a -> a -> Float
         u `in_units_of` w = in_canonical u / in_canonical w
+instance Unit a => Semigroup (Quantity a) where
+    (<>) = (.+)
+instance Unit a => Monoid (Quantity a) where
+    mempty = Qty 0 canonical
 
 (.*) :: Float -> Quantity a -> Quantity a
 k .* (Qty x u) = Qty (k*x) u
