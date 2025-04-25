@@ -57,8 +57,7 @@ data Nutrient
     | Vitamin_C
     | Vitamin_D
     | Vitamin_E
-    | Vitamin_K1
-    | Vitamin_K2
+    | Vitamin_K
     -- Misc
     | Cholesterol
     | Choline

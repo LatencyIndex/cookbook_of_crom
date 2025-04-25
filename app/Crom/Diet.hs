@@ -148,10 +148,10 @@ recommended_daily_intake bodymass =
     -- But also this level is allegedly too much according to an anecdotal story:
     --      https://www.devaboone.com/post/vitamin-d-part-2-shannon-s-story
     --      https://news.ycombinator.com/item?id=39744878
-    (Vitamin_D,  RDI Essential "" Nothing (just_ug 15)  (just_ug 100)),
-    (Vitamin_E,   RDI Essential "" Nothing (just_mg 15)  Nothing),
-    (Vitamin_K1,  RDI Essential "" Nothing (just_ug 110) Nothing),
-    (Vitamin_K2,  RDI Essential "" Nothing (just_ug 110) Nothing),
+    (Vitamin_D, RDI Essential "" Nothing (just_ug 15)  (just_ug 100)),
+    (Vitamin_E, RDI Essential "" Nothing (just_mg 15)  Nothing),
+    -- Vitamins K1 & K2 are considered equivalent.
+    (Vitamin_K, RDI Essential "" Nothing (just_ug 110) Nothing),
     -- Misc
     -- (Cholesterol)
     -- https://en.wikipedia.org/wiki/Choline#Dietary_recommendations
