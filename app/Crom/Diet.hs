@@ -45,7 +45,7 @@ recommendedDailyIntake bodymass =
         just_ug :: Float -> Maybe U.Mass
         just_ug = Just . U.as_ug
     in M.fromList [
-    -- -- Macronutrients
+    -- Macronutrients
     -- (N.Carbohydrate),
     -- (N.Fat),
     -- According to EFSA: https://en.wikipedia.org/wiki/Dietary_fiber#Dietary_recommendations
@@ -53,9 +53,9 @@ recommendedDailyIntake bodymass =
         Nothing (just_g 25) Nothing),
     -- (N.Protein),
     -- Even 1.5g protein/kg bodymass is near-optimal: https://mennohenselmans.com/the-myth-of-1glb-optimal-protein-intake-for-bodybuilders/
-    (N.CompleteProtein, RDI Beneficial "near-optimal even at lower limit"
+    (N.CompleteProtein, RDI Beneficial "Near-optimal even at lower limit."
         (just_g (1.5 * kgBm)) (just_g (1.8 * kgBm)) Nothing),
-    -- -- Minerals/elements
+    -- Minerals/elements
     -- https://en.wikipedia.org/wiki/Boron#Biological_role
     (N.Element_B, RDI Uncertain "Lower limit is very uncertain."
         Nothing Nothing (just_mg 20)),
@@ -71,7 +71,7 @@ recommendedDailyIntake bodymass =
     (N.Element_Cu, RDI Essential ""
         Nothing (just_mg 1.6) (just_mg 5)),
     -- https://en.wikipedia.org/wiki/Fluorine#Biological_role
-    (N.Element_F, RDI Unnecessary "present in toothpaste, only needed for tooth enamel"
+    (N.Element_F, RDI Unnecessary "Present in toothpaste, only needed for tooth enamel."
         Nothing Nothing Nothing),
     -- https://en.wikipedia.org/wiki/Iron#Nutrition
     (N.Element_Fe, RDI Essential ""
@@ -93,41 +93,75 @@ recommendedDailyIntake bodymass =
         Nothing (just_ug 65) (just_ug 600)),
     -- May not apply if you lose a lot of Na through sweat:
     -- https://www.heart.org/en/healthy-living/healthy-eating/eat-smart/sodium/how-much-sodium-should-i-eat-per-day
-    (N.Element_Na, RDI Essential "should consume more if you lose a lot of Na through sweat"
-        (just_g 0.5) Nothing (just_g 1.5))
+    (N.Element_Na, RDI Essential "Should consume more if losing a lot of Na through sweat."
+        (just_g 0.5) Nothing (just_g 1.5)),
     -- https://en.wikipedia.org/wiki/Phosphorus#Nutrition
-    (N.Element_P, RDI Essential "if a diet has sufficient protein and calcium, the amount of phosphorus is probably sufficient"
+    (N.Element_P, RDI Essential "If a diet has sufficient protein and calcium, the amount of phosphorus is probably sufficient."
         Nothing (just_mg 550) (just_mg 4000)),
     -- https://en.wikipedia.org/wiki/Sulfur#Biological_role
-    (N.Element_S, RDI Essential "if a diet has sufficient protein, the amount of sulfur is probably sufficient"
+    (N.Element_S, RDI Essential "If a diet has sufficient protein, the amount of sulfur is probably sufficient."
         Nothing Nothing Nothing),
     -- https://en.wikipedia.org/wiki/Selenium#Nutritional_sources_of_selenium
     (N.Element_Se, RDI Essential ""
         Nothing (just_ug 55) (just_ug 400)),
     -- https://en.wikipedia.org/wiki/Zinc#Nutrition
-    (N.Element_Zn, RDI Essential "US says max is 40mg, EU says 25mg"
+    (N.Element_Zn, RDI Essential "US max is 40mg, EU is 25mg."
         Nothing (just_mg 11) (just_mg 25)),
-    -- -- Protein amino acids
+    -- Protein amino acids
     -- (N.Amino_Histidine),
     -- (N.Amino_Isoleucine),
     -- (N.Amino_Leucine),
     -- (N.Amino_Lysine),
     -- (N.Amino_MethionineCystine),
-    -- (N.Amino_PheylalanineTyrosine),
+    -- (N.Amino_PhenylalanineTyrosine),
     -- (N.Amino_Threonine),
     -- (N.Amino_Tryptophan),
     -- (N.Amino_Valine),
-    -- -- Vitamins
-    -- (N.Vitamin_A),
-    -- (N.Vitamin_B12),
-    -- (N.Vitamin_C),
-    -- (N.Vitamin_D),
-    -- (N.Vitamin_E),
-    -- (N.Vitamin_K),
-    -- -- Misc
-    -- (N.Collagen),
-    -- (N.Amino_Glycine),
-    -- (N.Amino_Proline),
-    -- (N.Qenzyme_Q10),
-    -- (N.Creatine)
+    -- Vitamins: https://en.wikipedia.org/wiki/Vitamin#List_of_vitamins
+    (N.Vitamin_A, RDI Essential ""
+        Nothing (just_ug 900) (just_ug 3000)),
+    (N.Vitamin_B1, RDI Essential ""
+        Nothing (just_mg 1.2) Nothing),
+    (N.Vitamin_B2, RDI Essential ""
+        Nothing (just_mg 1.3) Nothing),
+    (N.Vitamin_B3, RDI Essential ""
+        Nothing (just_mg 16) Nothing),
+    (N.Vitamin_B5, RDI Essential ""
+        Nothing (just_mg 5) Nothing),
+    (N.Vitamin_B6, RDI Essential ""
+        Nothing (just_mg 1.3) Nothing),
+    (N.Vitamin_B7, RDI Essential ""
+        Nothing (just_ug 30) Nothing),
+    (N.Vitamin_B9, RDI Essential ""
+        Nothing (just_ug 400) Nothing),
+    (N.Vitamin_B12, RDI Essential ""
+        Nothing (just_ug 2.4) Nothing),
+    (N.Vitamin_C, RDI Essential ""
+        Nothing (just_mg 90) Nothing),
+    (N.Vitamin_D1, RDI Essential ""
+        Nothing (just_ug 15) Nothing),
+    (N.Vitamin_D2, RDI Essential ""
+        Nothing (just_ug 15) Nothing),
+    (N.Vitamin_D3, RDI Essential ""
+        Nothing (just_ug 15) Nothing),
+    (N.Vitamin_D4, RDI Essential ""
+        Nothing (just_ug 15) Nothing),
+    (N.Vitamin_D5, RDI Essential ""
+        Nothing (just_ug 15) Nothing),
+    (N.Vitamin_E, RDI Essential ""
+        Nothing (just_mg 15) Nothing),
+    (N.Vitamin_K1, RDI Essential ""
+        Nothing (just_ug 110) Nothing),
+    (N.Vitamin_K2, RDI Essential ""
+        Nothing (just_ug 110) Nothing),
+    -- Misc
+    -- https://www.webmd.com/diet/collagen-health-benefits
+    (N.Collagen, RDI Beneficial ""
+        Nothing (just_g 2.5) (just_g 15)),
+    -- https://en.wikipedia.org/wiki/Coenzyme_Q10
+    (N.Coenzyme_Q10, RDI Beneficial "Based on weak evidence. Obtained mostly as supplement."
+        Nothing (just_mg 100) (just_mg 1200)),
+    -- https://examine.com/supplements/Creatine/
+    (N.Creatine, RDI Beneficial "Ideally in monohydrate form. 25g/day during 1st week."
+        Nothing (just_g (0.06*kgBm)) Nothing)
     ]
