@@ -1,7 +1,8 @@
 module Crom.Food (
     Food(..),
-    nutrients_in_ingredients,
-    season_of_ingredients,
+    derive_season,
+    derive_calories,
+    derive_nutrients,
 ) where
 
 import qualified Data.Map as M
@@ -30,16 +31,20 @@ data Food = Food {
 instance Eq Food where (==) = (==) `on` name
 instance Ord Food where compare = compare `on` name
 
+-- Months during which all ingredients are in season.
+derive_season :: M.Map Food MassFraction -> Season
+derive_season = foldr (S.intersection . season) perennial . M.keys
+
+-- Calory density of combined ingredients.
+derive_calories :: M.Map Food MassFraction -> EnergyDensity
+derive_calories = mconcat . M.elems . M.mapWithKey (\food frac -> calories food .*. frac)
+
 -- Nutrient fractions of combined ingredients.
-nutrients_in_ingredients :: M.Map Food MassFraction -> M.Map Nutrient MassFraction
-nutrients_in_ingredients =
+derive_nutrients :: M.Map Food MassFraction -> M.Map Nutrient MassFraction
+derive_nutrients =
     foldr (M.unionWith (.+.)) M.empty . -- Sum nutrients from each food.
     M.mapWithKey nutrients_in_food -- Nutrient fractions in an individual food.
     where
     -- Nutrient fractions in one food fraction.
     nutrients_in_food :: Food -> MassFraction -> M.Map Nutrient MassFraction
     nutrients_in_food food frac = (frac .*.) <$> nutrients food
-
--- Months during which all ingredients are in season.
-season_of_ingredients :: M.Map Food MassFraction -> Season
-season_of_ingredients = foldr (S.intersection . season) perennial . M.keys
