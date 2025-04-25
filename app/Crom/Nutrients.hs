@@ -63,4 +63,5 @@ data Nutrient
     | Collagen
     | Coenzyme_Q10
     | Creatine
+    | Cholesterol
     deriving (Show, Eq, Ord)
