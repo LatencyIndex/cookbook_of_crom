@@ -8,6 +8,7 @@ module Crom.Food (
 import qualified Data.Map as M
 import qualified Data.Set as S
 import qualified Data.Text as T
+import Data.Maybe (fromMaybe)
 import Data.Function (on)
 import Crom.Calendar
 import Crom.Nutrients (Nutrient)
@@ -22,7 +23,7 @@ data Food = Food {
     ingredients :: M.Map Food MassFraction,
     recipe :: T.Text, -- Empty if no preparation is necessary.
     season :: Season, -- Which months of the year the food is in season.
-    calories :: EnergyDensity, -- Net, after discarding inedible parts.
+    calories :: Maybe EnergyDensity, -- Net, after discarding inedible parts. 'Maybe' to handle missing data.
     -- Net, after discarding inedible parts.
     -- Not necessarily the sum of ingredients, as nutrients can be altered by cooking (e.g. heat destroys vitamin C).
     nutrients :: M.Map Nutrient MassFraction
@@ -37,7 +38,9 @@ derive_season = foldr (S.intersection . season) perennial . M.keys
 
 -- Calory density of combined ingredients.
 derive_calories :: M.Map Food MassFraction -> EnergyDensity
-derive_calories = mconcat . M.elems . M.mapWithKey (\food frac -> calories food .*. frac)
+derive_calories = mconcat . M.elems . M.mapWithKey (\food frac -> get_calories food .*. frac) where
+    get_calories :: Food -> EnergyDensity
+    get_calories = fromMaybe mempty . calories
 
 -- Nutrient fractions of combined ingredients.
 derive_nutrients :: M.Map Food MassFraction -> M.Map Nutrient MassFraction
