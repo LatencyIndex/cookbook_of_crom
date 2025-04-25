@@ -10,7 +10,7 @@ data Date = Date {year :: Year, month :: Month, day :: Day} deriving (Show, Eq, 
 -- Otherwise, it contains the months [start, Dec] and [Jan, end]
 data Season = Season {start :: Month, end :: Month} deriving Show
 
-inSeason :: Month -> Season -> Bool
-inSeason x (Season a b)
+in_season :: Month -> Season -> Bool
+in_season x (Season a b)
     | a <= b = a <= x && x <= b
     | otherwise = x <= a || b <= x
