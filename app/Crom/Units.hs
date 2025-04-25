@@ -57,6 +57,7 @@ instance QMul Float         (Qty a)       (Qty a)       where x .*. (Qty y) = Qt
 instance QMul (Qty a)       Float         (Qty a)       where (Qty x) .*. y = Qty (x*y)
 instance QMul MassFraction  Mass          Mass          where (.*.) = qmul
 instance QMul Mass          MassFraction  Mass          where (.*.) = qmul
+instance QMul MassFraction  MassFraction  MassFraction  where (.*.) = qmul
 instance QMul EnergyDensity Mass          Energy        where (.*.) = qmul
 instance QMul Mass          EnergyDensity Energy        where (.*.) = qmul
 
