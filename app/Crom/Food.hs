@@ -1,4 +1,7 @@
-module Crom.Food where
+module Crom.Food (
+    Food(..),
+    nutrients_in_ingredients,
+) where
 
 import qualified Data.Map as M
 import qualified Data.Text as T
