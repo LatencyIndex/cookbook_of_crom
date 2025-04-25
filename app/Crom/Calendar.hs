@@ -1,16 +1,31 @@
-module Crom.Calendar where
+module Crom.Calendar (
+    Month,
+    Date,
+    Season,
+    perennial
+) where
 
-type Year = Int
-type Month = Int -- Numbered 1 - 12
-type Day = Int
-data Date = Date {year :: Year, month :: Month, day :: Day} deriving (Show, Eq, Ord)
+import qualified Data.Set as S
 
--- Closed interval of months that wraps around.
--- If start <= end, the season contains the months [start, end]
--- Otherwise, it contains the months [start, Dec] and [Jan, end]
-data Season = Season {start :: Month, end :: Month} deriving Show
+data Month
+    = Jan
+    | Feb
+    | Mar
+    | Apr
+    | May
+    | Jun
+    | Jul
+    | Aug
+    | Sep
+    | Oct
+    | Nov
+    | Dec
+    deriving (Show, Eq, Ord, Enum, Bounded)
 
-in_season :: Month -> Season -> Bool
-in_season x (Season a b)
-    | a <= b = a <= x && x <= b
-    | otherwise = x <= a || b <= x
+data Date = Date {year :: Int, month :: Month, day :: Int}
+    deriving Show
+
+type Season = S.Set Month
+
+perennial :: Season
+perennial = S.fromList [minBound, maxBound]
