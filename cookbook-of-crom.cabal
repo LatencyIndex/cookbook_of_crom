@@ -31,7 +31,6 @@ executable cookbook-of-crom
         Crom.Recipes
         Crom.Shopping
         Crom.Time
-        Crom.Units
         Crom.Units.Duration
         Crom.Units.Energy
         Crom.Units.Mass
