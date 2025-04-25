@@ -60,6 +60,8 @@ instance QMul Mass          MassFraction  Mass          where (.*.) = qmul
 instance QMul MassFraction  MassFraction  MassFraction  where (.*.) = qmul
 instance QMul EnergyDensity Mass          Energy        where (.*.) = qmul
 instance QMul Mass          EnergyDensity Energy        where (.*.) = qmul
+instance QMul MassFraction  EnergyDensity EnergyDensity where (.*.) = qmul
+instance QMul EnergyDensity MassFraction  EnergyDensity where (.*.) = qmul
 
 instance QDiv (Qty a)       Float         (Qty a)       where (Qty x) ./. y = Qty (x/y)
 instance QDiv (Qty a)       (Qty a)       Float         where (Qty x) ./. (Qty y) = x/y
