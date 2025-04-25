@@ -25,11 +25,11 @@ executable cookbook-of-crom
     main-is:          Main.hs
     -- Modules included in this executable, other than Main.
     other-modules:
+        Crom.Calendar
         Crom.Diet
         Crom.Food
         Crom.Nutrients
         Crom.Shopping
-        Crom.Time
         Crom.Units
         Crom.Util.Functional
         Crom.Util.Text

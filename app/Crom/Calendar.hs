@@ -1,4 +1,4 @@
-module Crom.Time where
+module Crom.Calendar where
 
 type Year = Int
 type Month = Int -- Numbered 1 - 12
