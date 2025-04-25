@@ -9,9 +9,9 @@ class Unit a where
     -- This can be defined directly, by implementing x `inUnitsOf` CanonicalUnit for every x
     -- (e.g. x `inUnitsOf` U_kg), and then implement conversion between every pair of units
     -- as the ratio of conversions to CanonicalUnit. However, because the ratio definition has
-    -- a pattern of x `inUnitsOf` y, it will match every pattern, no warning is emitted if some
-    -- conversions to CanonicalUnit are missing. So a toCanonical :: a -> Float
-    -- helper function should be used, to get a warning if any cases are missing.
+    -- a pattern of x `inUnitsOf` y, it will match every pattern, so no warning is emitted if
+    -- some conversions to CanonicalUnit are missing. So inUnitsOf should be implemented through
+    -- a toCanonical :: a -> Float helper function, to get a warning if any cases are missing.
     inUnitsOf :: a -> a -> Float
     convertTo :: a -> Quantity a -> Quantity a
     convertTo w (Qty x u) = Qty ((u `inUnitsOf` w)*x) w
@@ -95,3 +95,22 @@ kcal :: Energy -> Float
 kcal = num . convertTo U_kcal
 asKcal :: Float -> Energy
 asKcal x = Qty x U_kcal
+
+data DurationUnit
+    = U_s
+    | U_min
+    | U_h
+    | U_day
+instance Show DurationUnit where
+    show U_s   = "s"
+    show U_min = "min"
+    show U_h   = "h"
+    show U_day = "days"
+type Duration = Quantity DurationUnit
+instance Unit DurationUnit where
+    x `inUnitsOf` y = in_s x / in_s y where
+        in_s :: DurationUnit -> Float
+        in_s U_s   = 1
+        in_s U_min = 60 * in_s U_s
+        in_s U_h   = 60 * in_s U_min
+        in_s U_day = 24 * in_s U_h
