@@ -6,7 +6,7 @@ data Nutrient
     -- Macronutrients
     = Carbohydrate
     | Fat
-    | Fibre
+    | Fiber
     | Protein -- Undefined whether complete or not.
     | CompleteProtein
     -- Minerals/elements

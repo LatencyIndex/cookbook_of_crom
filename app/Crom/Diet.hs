@@ -66,7 +66,7 @@ recommended_daily_intake bodymass =
     -- (Carbohydrate),
     -- (Fat),
     -- According to EFSA: https://en.wikipedia.org/wiki/Dietary_fiber#Dietary_recommendations
-    (Fibre, RDI Beneficial ""
+    (Fiber, RDI Beneficial ""
         Nothing (just_g 25) Nothing),
     -- (Protein),
     -- Even 1.5g protein/kg bodymass is near-optimal: https://mennohenselmans.com/the-myth-of-1glb-optimal-protein-intake-for-bodybuilders/
