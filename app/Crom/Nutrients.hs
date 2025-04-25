@@ -39,15 +39,25 @@ data Nutrient
     | Amino_Valine
     -- Vitamins
     | Vitamin_A
+    | Vitamin_B1
+    | Vitamin_B2
+    | Vitamin_B3
+    | Vitamin_B5
+    | Vitamin_B6
+    | Vitamin_B7
+    | Vitamin_B9
     | Vitamin_B12
     | Vitamin_C
-    | Vitamin_D
+    | Vitamin_D1
+    | Vitamin_D2
+    | Vitamin_D3
+    | Vitamin_D4
+    | Vitamin_D5
     | Vitamin_E
-    | Vitamin_K
+    | Vitamin_K1
+    | Vitamin_K2
     -- Misc
     | Collagen
-    | Amino_Glycine
-    | Amino_Proline
-    | Qenzyme_Q10
+    | Coenzyme_Q10
     | Creatine
     deriving (Show, Eq, Ord)
