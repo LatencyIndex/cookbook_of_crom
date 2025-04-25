@@ -1,7 +1,7 @@
 module Crom.Units.Energy (
-    EnergyUnit,
-    Energy,
-    as_kcal
+    EnergyUnit, Energy,
+    in_kcal, as_kcal,
+    in_kJ, as_kJ
 ) where
 
 import Crom.Units.Units
@@ -20,7 +20,14 @@ instance Unit EnergyUnit where
         in_kcal U_kJ   = 0.23900574
     convert_to w (Qty x u) = Qty ((u `in_units_of` w)*x) w
 
-kcal :: Energy -> Float
-kcal = num . convert_to U_kcal
+-- Convenience conversion functions
+
+in_kcal :: Energy -> Float
+in_kcal = num . convert_to U_kcal
 as_kcal :: Float -> Energy
 as_kcal x = Qty x U_kcal
+
+in_kJ :: Energy -> Float
+in_kJ = num . convert_to U_kJ
+as_kJ :: Float -> Energy
+as_kJ x = Qty x U_kJ
