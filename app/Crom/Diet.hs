@@ -10,7 +10,7 @@ data Target
     | Bulk -- Build muscle.
 
 dailyKcal :: Target -> U.Mass -> U.Energy
-dailyKcal Maintain bodymass = U.asKcal (35 * U.kilograms bodymass)
+dailyKcal Maintain bodymass = U.asKcal (35 * U.to_kg bodymass)
 -- Stronglifts says 10-15% more than TDEE: https://stronglifts.com/gain-weight/#Can_I_gain_weight_without_gaining_fat
 -- Start with 10%, then increase as needed, to minimize fat gain.
 dailyKcal Bulk bodymass = 1.10 `U.qMul` dailyKcal Maintain bodymass
@@ -27,7 +27,7 @@ data RDI = RDI {
 
 recommendedDailyIntake :: U.Mass -> M.Map N.Nutrient RDI
 recommendedDailyIntake bodymass =
-    let kgBm = U.kilograms bodymass
+    let kgBm = U.to_kg bodymass :: Float
     in M.fromList [
     -- -- Macronutrients
     -- (N.Carbohydrate),

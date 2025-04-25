@@ -14,6 +14,7 @@ class Unit a where
     -- helper function should be used, to get a warning if any cases are missing.
     inUnitsOf :: a -> a -> Float
     convertTo :: a -> Quantity a -> Quantity a
+    convertTo w (Qty x u) = Qty ((u `inUnitsOf` w)*x) w
 
 qMul :: Float -> Quantity a -> Quantity a
 qMul k (Qty x u) = Qty (k*x) u
@@ -30,7 +31,7 @@ qSub l r = Qty (num l - (num $ convertTo u r)) u
     where u = unit l
 
 
--- A MassUnit can be a kilogram, gram, a milliliter of milk, the mass of an egg or apple, a spoon of oil, etc.
+-- A MassUnit can be a kilogram, gram, the mass of a milliliter of milk, an egg, apple, a spoon of oil, etc.
 data MassUnit
     = U_kg
     | U_g
@@ -38,7 +39,7 @@ data MassUnit
     | U_lb
 instance Show MassUnit where
     show U_kg = "kg"
-    show U_g = "g"
+    show U_g  =  "g"
     show U_mg = "mg"
     show U_lb = "lb"
 type Mass = Quantity MassUnit
@@ -46,22 +47,27 @@ type Mass = Quantity MassUnit
 instance Unit MassUnit where
     x `inUnitsOf` y = in_g x / in_g y where
         in_g :: MassUnit -> Float
-        in_g U_kg = 1000
-        in_g U_g = 1
+        in_g U_kg = 1e+3
+        in_g U_g  = 1
         in_g U_mg = 1e-3
         in_g U_lb = 453.59237
-    convertTo w (Qty x u) = Qty ((u `inUnitsOf` w)*x) w
 
-grams :: Mass -> Float
-grams = num . convertTo U_g
-as_g :: Float -> Mass
-as_g x = Qty x U_g
+-- Convenience conversion functions
 
-kilograms :: Mass -> Float
-kilograms = num . convertTo U_kg
+to_kg :: Mass -> Float
+to_kg = num . convertTo U_kg
 as_kg :: Float -> Mass
 as_kg x = Qty x U_kg
 
+to_g :: Mass -> Float
+to_g = num . convertTo U_g
+as_g :: Float -> Mass
+as_g x = Qty x U_g
+
+to_mg :: Mass -> Float
+to_mg = num . convertTo U_mg
+as_mg :: Float -> Mass
+as_mg x = Qty x U_mg
 
 data EnergyUnit
     = U_kcal
