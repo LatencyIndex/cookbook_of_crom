@@ -36,11 +36,13 @@ data MassUnit
     = U_kg
     | U_g
     | U_mg
+    | U_ug -- microgram
     | U_lb
 instance Show MassUnit where
     show U_kg = "kg"
     show U_g  =  "g"
     show U_mg = "mg"
+    show U_ug = "ug"
     show U_lb = "lb"
 type Mass = Quantity MassUnit
 
@@ -50,6 +52,7 @@ instance Unit MassUnit where
         in_g U_kg = 1e+3
         in_g U_g  = 1
         in_g U_mg = 1e-3
+        in_g U_ug = 1e-6
         in_g U_lb = 453.59237
 
 -- Convenience conversion functions
@@ -68,6 +71,11 @@ to_mg :: Mass -> Float
 to_mg = num . convertTo U_mg
 as_mg :: Float -> Mass
 as_mg x = Qty x U_mg
+
+to_ug :: Mass -> Float
+to_ug = num . convertTo U_ug
+as_ug :: Float -> Mass
+as_ug x = Qty x U_ug
 
 data EnergyUnit
     = U_kcal
