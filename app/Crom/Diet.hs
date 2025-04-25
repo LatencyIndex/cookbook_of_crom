@@ -11,13 +11,13 @@ data Target
     | Bulk -- Build muscle.
 
 dailyKcal :: Target -> U.Mass -> U.Energy
-dailyKcal Maintain bodymass = U.asKcal (35 * U.to_kg bodymass)
+dailyKcal Maintain bodymass = U.as_kcal (35 * U.to_kg bodymass)
 -- Stronglifts says 10-15% more than TDEE: https://stronglifts.com/gain-weight/#Can_I_gain_weight_without_gaining_fat
 -- Start with 10%, then increase as needed, to minimize fat gain.
 dailyKcal Bulk bodymass = 1.10 `U.qMul` dailyKcal Maintain bodymass
 -- Gaining muscle while losing weight is possible according to https://mennohenselmans.com/gain-muscle-and-lose-fat-at-the-same-time/
 -- 500-1000 calorie deficit recommended for weight loss, but 500 is plenty, especially when also training.
-dailyKcal Cut bodymass = dailyKcal Maintain bodymass `U.qSub` U.asKcal 500
+dailyKcal Cut bodymass = dailyKcal Maintain bodymass `U.qSub` U.as_kcal 500
 
 data BiologicalRole
     = Essential

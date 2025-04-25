@@ -13,7 +13,7 @@ module Crom.Units (
     to_kg,
     EnergyUnit,
     Energy,
-    asKcal,
+    as_kcal,
     DurationUnit,
     Duration
 ) where
@@ -111,8 +111,8 @@ instance Unit EnergyUnit where
 
 kcal :: Energy -> Float
 kcal = num . convertTo U_kcal
-asKcal :: Float -> Energy
-asKcal x = Qty x U_kcal
+as_kcal :: Float -> Energy
+as_kcal x = Qty x U_kcal
 
 data DurationUnit
     = U_s
