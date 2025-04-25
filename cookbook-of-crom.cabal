@@ -28,7 +28,6 @@ executable cookbook-of-crom
         Crom.Diet
         Crom.Food
         Crom.Nutrients
-        Crom.Recipes
         Crom.Shopping
         Crom.Time
         Crom.Units.Duration
