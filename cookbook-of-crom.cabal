@@ -2,7 +2,7 @@ cabal-version:      3.6
 name:               cookbook-of-crom
 version:            0.1.0.0
 
-synopsis: Todo write a synopsis
+synopsis: Evaluate & plan the nutrient content of your diet
 
 author:             LatencyIndex
 maintainer:         LatencyIndex
