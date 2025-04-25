@@ -2,28 +2,17 @@ cabal-version:      3.6
 name:               cookbook-of-crom
 version:            0.1.0.0
 
--- A short (one-line) description of the package.
--- synopsis:
+synopsis: Todo write a synopsis
 
--- A longer description of the package.
--- description:
+author:             LatencyIndex
+maintainer:         LatencyIndex
 
--- A URL where users can report bugs.
--- bug-reports:
-
--- The license under which the package is released.
--- license:
--- author:             Crom
--- maintainer:         Crom
-
--- A copyright notice.
--- copyright:
--- category:
-extra-source-files: CHANGELOG.md
+extra-source-files:
+    LICENSE
+    README.md
 
 executable cookbook-of-crom
     main-is:          Main.hs
-    -- Modules included in this executable, other than Main.
     other-modules:
         Crom.Calendar
         Crom.Diet
@@ -34,8 +23,6 @@ executable cookbook-of-crom
         Crom.Units
         Crom.Util.Functional
         Crom.Util.Text
-    -- LANGUAGE extensions used by modules in this package.
-    -- other-extensions:
     default-extensions:
         OverloadedRecordDot
         OverloadedStrings
@@ -50,7 +37,7 @@ executable cookbook-of-crom
         -fwarn-tabs
         -fwarn-unused-imports
         -fwarn-missing-signatures
-        -- -fwarn-name-shadowing
+        -fwarn-name-shadowing
         -fwarn-incomplete-patterns
         -fwarn-overlapping-patterns
         -fwarn-incomplete-uni-patterns
