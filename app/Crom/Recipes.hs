@@ -14,8 +14,8 @@ data Recipe = Recipe {
     persistence_time :: U.Duration -- How long the meal keeps, in fridge or freezer.
 } deriving (Show)
 
-nutrientsPerServing :: Recipe -> M.Map N.Nutrient U.Mass
-nutrientsPerServing
+nutrients_per_serving :: Recipe -> M.Map N.Nutrient U.Mass
+nutrients_per_serving
     = M.unionsWith U.qSum
     . fmap (uncurry $ flip F.nutrientsIn)
     . ingredients
