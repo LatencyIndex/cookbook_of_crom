@@ -26,7 +26,6 @@ class Unit a where
 (.*) :: Float -> Quantity a -> Quantity a
 k .* (Qty x u) = Qty (k*x) u
 
-
 (./) :: Unit a => Quantity a -> Quantity a -> Float
 l ./ r = num l / (num $ convert_to (unit l) r)
 
