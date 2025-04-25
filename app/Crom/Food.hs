@@ -18,6 +18,5 @@ data Food = Food {
 } deriving (Show)
 
 -- Amount of nutrients in a certain mass of an ingredient.
-nutrientsIn :: Mass -> Food -> M.Map Nutrient Mass
-nutrientsIn mass = fmap (nb_100g .*) . nutrients_per_100g
-    where nb_100g = mass ./ as_g 100
+nutrients_in :: Mass -> Food -> M.Map Nutrient Mass
+nutrients_in mass = fmap ((mass ./ as_g 100) .*) . nutrients_per_100g
