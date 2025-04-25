@@ -134,6 +134,15 @@ recommended_daily_intake bodymass =
     (Vitamin_B9,  RDI Essential "" Nothing (just_ug 400) Nothing),
     (Vitamin_B12, RDI Essential "" Nothing (just_ug 2.4) Nothing),
     (Vitamin_C,   RDI Essential "" Nothing (just_mg 90)  Nothing),
+    -- There was a statistical error in the article upon which most vitamin D intake recommendations are based.
+    -- The intake should be much higher, ~4000-8000 IU/day:
+    -- https://vitamindforall.org/letter.html
+    -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5541280/
+    -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4210929/
+    -- https://www.ncbi.nlm.nih.gov/m/pubmed/28768407/
+    -- But also this level is allegedly too much according to an anecdotal story:
+    --      https://www.devaboone.com/post/vitamin-d-part-2-shannon-s-story
+    --      https://news.ycombinator.com/item?id=39744878
     (Vitamin_D1,  RDI Essential "" Nothing (just_ug 15)  Nothing),
     (Vitamin_D2,  RDI Essential "" Nothing (just_ug 15)  Nothing),
     (Vitamin_D3,  RDI Essential "" Nothing (just_ug 15)  Nothing),
@@ -143,6 +152,8 @@ recommended_daily_intake bodymass =
     (Vitamin_K1,  RDI Essential "" Nothing (just_ug 110) Nothing),
     (Vitamin_K2,  RDI Essential "" Nothing (just_ug 110) Nothing),
     -- Misc
+    -- https://en.wikipedia.org/wiki/Choline#Dietary_recommendations
+    (Choline, RDI Essential "" Nothing (just_mg 550) Nothing),
     -- https://www.webmd.com/diet/collagen-health-benefits
     (Collagen, RDI Beneficial "" Nothing (just_g 2.5) (just_g 15)),
     -- https://en.wikipedia.org/wiki/Coenzyme_Q10

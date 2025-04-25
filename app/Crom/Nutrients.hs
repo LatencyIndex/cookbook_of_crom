@@ -57,6 +57,7 @@ data Nutrient
     | Vitamin_K1
     | Vitamin_K2
     -- Misc
+    | Choline
     | Collagen
     | Coenzyme_Q10
     | Creatine
