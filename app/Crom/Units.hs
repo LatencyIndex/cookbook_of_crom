@@ -85,10 +85,10 @@ instance Show EnergyUnit where
     show U_kJ = "kJ"
 type Energy = Quantity EnergyUnit
 instance Unit EnergyUnit where
-    x `inUnitsOf` y = inKcal x / inKcal y where
-        inKcal :: EnergyUnit -> Float
-        inKcal U_kcal = 1
-        inKcal U_kJ = 0.23900574
+    x `inUnitsOf` y = in_kcal x / in_kcal y where
+        in_kcal :: EnergyUnit -> Float
+        in_kcal U_kcal = 1
+        in_kcal U_kJ   = 0.23900574
     convertTo w (Qty x u) = Qty ((u `inUnitsOf` w)*x) w
 
 kcal :: Energy -> Float
