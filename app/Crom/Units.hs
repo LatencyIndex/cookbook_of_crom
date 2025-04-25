@@ -1,4 +1,22 @@
-module Crom.Units where
+module Crom.Units (
+    Quantity(..),
+    Unit,
+    qMul,
+    qDiv,
+    qSum,
+    qSub,
+    MassUnit,
+    Mass,
+    as_g,
+    as_mg,
+    as_ug,
+    to_kg,
+    EnergyUnit,
+    Energy,
+    asKcal,
+    DurationUnit,
+    Duration
+) where
 
 data Quantity u = Qty {num :: Float, unit :: u}
 instance Show u => Show (Quantity u) where
