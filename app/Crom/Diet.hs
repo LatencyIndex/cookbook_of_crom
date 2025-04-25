@@ -54,7 +54,7 @@ protein_amino_ratios = M.fromList [
 -- For healthy adult male
 recommended_daily_intake :: Mass -> M.Map Nutrient RecommendedDailyIntake
 recommended_daily_intake bodymass =
-    let kgBm = to_kg bodymass :: Float
+    let kg_bm = to_kg bodymass :: Float
         -- Convenience functions
         just_g :: Float -> Maybe Mass
         just_g = Just . as_g
@@ -72,7 +72,7 @@ recommended_daily_intake bodymass =
     -- (Protein),
     -- Even 1.5g protein/kg bodymass is near-optimal: https://mennohenselmans.com/the-myth-of-1glb-optimal-protein-intake-for-bodybuilders/
     (CompleteProtein, RDI Beneficial "Near-optimal even at lower limit."
-        (just_g (1.5 * kgBm)) (just_g (1.8 * kgBm)) Nothing),
+        (just_g (1.5 * kg_bm)) (just_g (1.8 * kg_bm)) Nothing),
     -- Minerals/elements
     -- https://en.wikipedia.org/wiki/Boron#Biological_role
     (Element_B, RDI Uncertain "Lower limit is very uncertain." Nothing Nothing (just_mg 20)),
@@ -150,7 +150,7 @@ recommended_daily_intake bodymass =
         Nothing (just_mg 100) (just_mg 1200)),
     -- https://examine.com/supplements/Creatine/
     (Creatine, RDI Beneficial "Ideally in monohydrate form. 25g/day during 1st week."
-        Nothing (just_g (0.06*kgBm)) Nothing)
+        Nothing (just_g (0.06*kg_bm)) Nothing)
     ]
 
 -- Misc. diet notes:
