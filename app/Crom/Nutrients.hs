@@ -9,9 +9,8 @@ data Nutrient
     | Fiber
     | Protein -- Undefined whether complete or not.
     | CompleteProtein
-    -- Minerals/elements
+    -- Minerals/elements (ignoring carbon)
     | Element_B
-    | Element_C
     | Element_Ca
     | Element_Co
     | Element_Cu
