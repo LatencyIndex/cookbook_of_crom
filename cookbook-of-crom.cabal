@@ -37,6 +37,8 @@ executable cookbook-of-crom
     -- other-extensions:
     default-extensions:
         OverloadedRecordDot
+        -- Implicitly convert String literals to Data.Text
+        OverloadedStrings
         DuplicateRecordFields
     build-depends:
         base,
