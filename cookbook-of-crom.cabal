@@ -30,10 +30,9 @@ executable cookbook-of-crom
         Crom.Nutrients
         Crom.Shopping
         Crom.Time
-        Crom.Units.Duration
-        Crom.Units.Energy
-        Crom.Units.Mass
-        Crom.Units.Units
+        Crom.Units
+        Crom.Util.Functional
+        Crom.Util.Text
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     default-extensions:

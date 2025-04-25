@@ -3,7 +3,7 @@ module Crom.Shopping where
 import qualified Data.Text as T
 import Crom.Food (Food)
 import Crom.Time (Date)
-import Crom.Units.Mass (Mass)
+import Crom.Units
 
 data Price = Price {
     date :: Date,

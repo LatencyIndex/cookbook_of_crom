@@ -3,9 +3,7 @@ module Crom.Food where
 import qualified Data.Map as M
 import qualified Data.Text as T
 import Crom.Nutrients (Nutrient)
-import Crom.Units.Energy (Energy)
-import Crom.Units.Mass (Mass, as_g)
-import Crom.Units.Units ((.+), (./), (.*))
+import Crom.Units
 
 -- Generic food, ingredients, or meal/recipe, not tied to a specific product or manufacturer.
 -- E.g. potatoes, eggs, protein powder, tofu, chocolate, vegetable paella, carbonara..
@@ -18,17 +16,23 @@ data Food = Food {
     -- Net, after discarding inedible parts.
     -- Not necessarily the sum of ingredients, as nutrients can be altered by cooking.
     -- E.g. heat destroys vitamin C.
-    nutrients_per_100g :: M.Map Nutrient Mass,
-    calories_per_100g :: Energy, -- Net, after discarding inedible parts.
+    nutrients :: M.Map Nutrient MassFraction,
+    calories :: EnergyDensity, -- Net, after discarding inedible parts.
     edible :: Bool -- If it's edible as-is, e.g. bread. Otherwise it should be an ingredient to a different food, e.g. tomato sauce or raw potatoes.
 } deriving (Show)
 
 -- Absolute amount of nutrients in a certain mass of a food.
-nutrients_in :: Food -> Mass -> M.Map Nutrient Mass
-nutrients_in food mass = ((mass ./ as_g 100) .*) <$> nutrients_per_100g food
+abs_nutrients_in :: Food -> Mass -> M.Map Nutrient Mass
+abs_nutrients_in food mass = (mass .*.) <$> nutrients food
 
 -- Absolute sum of nutrients in a collection of foods.
-derive_nutrients :: M.Map Food Mass -> M.Map Nutrient Mass
-derive_nutrients =
-    foldr (M.unionWith (.+)) M.empty . -- Sum nutrients from each food.
-    M.mapWithKey nutrients_in -- Nutrients in an individual food.
+derive_abs_nutrients :: M.Map Food Mass -> M.Map Nutrient Mass
+derive_abs_nutrients =
+    foldr (M.unionWith (.+.)) M.empty . -- Sum nutrients from each food.
+    M.mapWithKey abs_nutrients_in -- Nutrients in an individual food.
+
+-- Nutrients according to the ingredients.
+derive_nutrients :: M.Map Food Mass -> M.Map Nutrient MassFraction
+derive_nutrients nutrients = (`mFracDiv` mass) <$> abs_nutrients where
+    mass = mconcat (M.elems nutrients)
+    abs_nutrients = derive_abs_nutrients nutrients

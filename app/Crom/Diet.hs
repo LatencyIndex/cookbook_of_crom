@@ -3,9 +3,7 @@ module Crom.Diet where
 import qualified Data.Map as M
 import qualified Data.Text as T
 import Crom.Nutrients (Nutrient(..))
-import Crom.Units.Energy (Energy, as_kcal)
-import Crom.Units.Mass (Mass, in_kg, as_g, as_mg, as_ug)
-import Crom.Units.Units ((.*), (.-))
+import Crom.Units
 
 data Target
     = Cut -- Lose weight.
@@ -13,13 +11,13 @@ data Target
     | Bulk -- Build muscle.
 
 daily_kcal :: Target -> Mass -> Energy
-daily_kcal Maintain bodymass = as_kcal (35 * in_kg bodymass)
+daily_kcal Maintain bodymass = 35 *. kcal_per_kg .*. bodymass
 -- Stronglifts says 10-15% more than TDEE: https://stronglifts.com/gain-weight/#Can_I_gain_weight_without_gaining_fat
 -- Start with 10%, then increase as needed, to minimize fat gain.
-daily_kcal Bulk bodymass = 1.10 .* daily_kcal Maintain bodymass
+daily_kcal Bulk bodymass = 1.10 *. daily_kcal Maintain bodymass
 -- Gaining muscle while losing weight is possible according to https://mennohenselmans.com/gain-muscle-and-lose-fat-at-the-same-time/
 -- 500-1000 calorie deficit recommended for weight loss, but 500 is plenty, especially when also training.
-daily_kcal Cut bodymass = daily_kcal Maintain bodymass .- as_kcal 500
+daily_kcal Cut bodymass = daily_kcal Maintain bodymass .-. (500 *. kcal)
 
 data BiologicalRole
     = Essential
@@ -38,30 +36,27 @@ data RecommendedDailyIntake = RDI {
 -- Mass fractions of amino acids required for one mass unit of complete protein.
 -- I.e. Protein should contain at least 55mg/g of Leucine (among others) to be 'complete'.
 -- Source: https://en.wikipedia.org/wiki/Complete_protein#Amino_acid_profile
-protein_amino_ratios :: M.Map Nutrient Float
+protein_amino_ratios :: M.Map Nutrient MassFraction
 protein_amino_ratios = M.fromList [
-        (Amino_Tryptophan, 7e-3),
-        (Amino_Threonine, 27e-3),
-        (Amino_Isoleucine, 25e-3),
-        (Amino_Leucine, 55e-3),
-        (Amino_Lysine, 51e-3),
-        (Amino_MethionineCystine, 25e-3),
-        (Amino_PheylalanineTyrosine, 47e-3),
-        (Amino_Valine, 32e-3),
-        (Amino_Histidine, 18e-3)
+        (Amino_Tryptophan,            7 *. mg_per_g),
+        (Amino_Threonine,            27 *. mg_per_g),
+        (Amino_Isoleucine,           25 *. mg_per_g),
+        (Amino_Leucine,              55 *. mg_per_g),
+        (Amino_Lysine,               51 *. mg_per_g),
+        (Amino_MethionineCystine,    25 *. mg_per_g),
+        (Amino_PheylalanineTyrosine, 47 *. mg_per_g),
+        (Amino_Valine,               32 *. mg_per_g),
+        (Amino_Histidine,            18 *. mg_per_g)
     ]
 
 -- For healthy adult male
 recommended_daily_intake :: Mass -> M.Map Nutrient RecommendedDailyIntake
 recommended_daily_intake bodymass =
-    let kg_bm = in_kg bodymass :: Float
-        -- Convenience functions
-        just_g :: Float -> Maybe Mass
-        just_g = Just . as_g
-        just_mg :: Float -> Maybe Mass
-        just_mg = Just . as_mg
-        just_ug :: Float -> Maybe Mass
-        just_ug = Just . as_ug
+    -- Convenience definitions
+    let just_g, just_mg, just_ug :: Float -> Maybe Mass
+        just_g  = Just . (g .*)
+        just_mg = Just . (mg .*)
+        just_ug = Just . (ug .*)
     in M.fromList [
     -- Macronutrients
     -- (Carbohydrate),
@@ -72,7 +67,7 @@ recommended_daily_intake bodymass =
     -- (Protein),
     -- Even 1.5g protein/kg bodymass is near-optimal: https://mennohenselmans.com/the-myth-of-1glb-optimal-protein-intake-for-bodybuilders/
     (CompleteProtein, RDI Beneficial "Near-optimal even at lower limit."
-        (just_g (1.5 * kg_bm)) (just_g (1.8 * kg_bm)) Nothing),
+        (Just (1.5 *. g_per_kg .*. bodymass)) (Just (1.8 *. g_per_kg .*. bodymass)) Nothing),
     -- Minerals/elements
     -- https://en.wikipedia.org/wiki/Boron#Biological_role
     (Element_B, RDI Uncertain "Lower limit is very uncertain." Nothing Nothing (just_mg 20)),
@@ -161,7 +156,7 @@ recommended_daily_intake bodymass =
         Nothing (just_mg 100) (just_mg 1200)),
     -- https://examine.com/supplements/Creatine/
     (Creatine, RDI Beneficial "Ideally in monohydrate form. 25g/day during 1st week."
-        Nothing (just_g (0.06*kg_bm)) Nothing)
+        Nothing (Just (0.06 *. g_per_kg .*. bodymass)) Nothing)
     ]
 
 -- Misc. diet notes:
