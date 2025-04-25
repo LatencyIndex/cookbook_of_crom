@@ -27,12 +27,12 @@ class Unit a where
 k .* (Qty x u) = Qty (k*x) u
 
 (./) :: Unit a => Quantity a -> Quantity a -> Float
-l ./ r = num l / (num $ convert_to (unit l) r)
+l ./ r = num l / num (convert_to (unit l) r)
 
 (.+) :: Unit a => Quantity a -> Quantity a -> Quantity a
-l .+ r = Qty (num l + (num $ convert_to u r)) u
+l .+ r = Qty (num l + num (convert_to u r)) u
     where u = unit l
 
 (.-) :: Unit a => Quantity a -> Quantity a -> Quantity a
-l .- r = Qty (num l - (num $ convert_to u r)) u
+l .- r = Qty (num l - num (convert_to u r)) u
     where u = unit l
