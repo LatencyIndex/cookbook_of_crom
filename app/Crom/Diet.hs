@@ -36,18 +36,22 @@ data RecommendedDailyIntake = RDI {
 -- Mass fractions of amino acids required for one mass unit of complete protein.
 -- I.e. Protein should contain at least 55mg/g of Leucine (among others) to be 'complete'.
 -- Source: https://en.wikipedia.org/wiki/Complete_protein#Amino_acid_profile
-protein_amino_ratios :: M.Map Nutrient MassFraction
-protein_amino_ratios = M.fromList [
-        (Amino_Tryptophan,             7 *. mg_per_g),
-        (Amino_Threonine,             27 *. mg_per_g),
-        (Amino_Isoleucine,            25 *. mg_per_g),
-        (Amino_Leucine,               55 *. mg_per_g),
-        (Amino_Lysine,                51 *. mg_per_g),
-        (Amino_MethionineCystine,     25 *. mg_per_g),
-        (Amino_PhenylalanineTyrosine, 47 *. mg_per_g),
-        (Amino_Valine,                32 *. mg_per_g),
-        (Amino_Histidine,             18 *. mg_per_g)
-    ]
+-- There is confusion regarding cysteine and cystine:
+-- WHO/FAO/UNU Expert Consultation Protein and amino acid requirements in human nutrition (https://pubmed.ncbi.nlm.nih.gov/18330140)
+    -- lists cysteine as essential (though it can be replaced by methionine)
+-- https://en.wikipedia.org/wiki/Complete_protein
+    -- has two tables, uses cysteine in one, and cystine in the other
+-- https://vegetarianism.stackexchange.com/questions/1402/what-calculation-provided-the-amino-acid-profile-of-a-complete-protein
+    -- uses cysteine
+-- Tryptophan                 7 *. mg_per_g
+-- Threonine                 27 *. mg_per_g
+-- Isoleucine                25 *. mg_per_g
+-- Leucine                   55 *. mg_per_g
+-- Lysine                    51 *. mg_per_g
+-- Methionine + Cysteine     25 *. mg_per_g
+-- Phenylalanine + Tyrosine  47 *. mg_per_g
+-- Valine                    32 *. mg_per_g
+-- Histidine                 18 *. mg_per_g
 
 -- For healthy adult male
 recommended_daily_intake :: Mass -> M.Map Nutrient RecommendedDailyIntake

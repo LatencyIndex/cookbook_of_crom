@@ -27,15 +27,17 @@ data Nutrient
     | Element_S
     | Element_Se
     | Element_Zn
-    -- Protein amino acids
+    -- Essential amino acids for protein
+    | Amino_Cysteine
     | Amino_Histidine
     | Amino_Isoleucine
     | Amino_Leucine
     | Amino_Lysine
-    | Amino_MethionineCystine
-    | Amino_PhenylalanineTyrosine
+    | Amino_Methionine
+    | Amino_Phenylalanine
     | Amino_Threonine
     | Amino_Tryptophan
+    | Amino_Tyrosine
     | Amino_Valine
     -- Vitamins
     | Vitamin_A
