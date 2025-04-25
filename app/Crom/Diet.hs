@@ -135,6 +135,8 @@ recommended_daily_intake bodymass =
     (Vitamin_B9,  RDI Essential "" Nothing (just_ug 400) Nothing),
     (Vitamin_B12, RDI Essential "" Nothing (just_ug 2.4) Nothing),
     (Vitamin_C,   RDI Essential "" Nothing (just_mg 90)  Nothing),
+    -- Vitamins D2 & D3 are biologically equivalent as far as we know, and others are non-essential,
+    -- so only a single value is used for vitamin D content, which represents D2 + D3.
     -- There was a statistical error in the article upon which most vitamin D intake recommendations are based.
     -- The intake should be much higher, ~4000-8000 IU/day:
     -- https://vitamindforall.org/letter.html
@@ -144,11 +146,7 @@ recommended_daily_intake bodymass =
     -- But also this level is allegedly too much according to an anecdotal story:
     --      https://www.devaboone.com/post/vitamin-d-part-2-shannon-s-story
     --      https://news.ycombinator.com/item?id=39744878
-    (Vitamin_D1,  RDI Essential "" Nothing (just_ug 15)  Nothing),
-    (Vitamin_D2,  RDI Essential "" Nothing (just_ug 15)  Nothing),
-    (Vitamin_D3,  RDI Essential "" Nothing (just_ug 15)  Nothing),
-    (Vitamin_D4,  RDI Essential "" Nothing (just_ug 15)  Nothing),
-    (Vitamin_D5,  RDI Essential "" Nothing (just_ug 15)  Nothing),
+    (Vitamin_D,  RDI Essential "" Nothing (just_ug 15)  (just_ug 100)),
     (Vitamin_E,   RDI Essential "" Nothing (just_mg 15)  Nothing),
     (Vitamin_K1,  RDI Essential "" Nothing (just_ug 110) Nothing),
     (Vitamin_K2,  RDI Essential "" Nothing (just_ug 110) Nothing),

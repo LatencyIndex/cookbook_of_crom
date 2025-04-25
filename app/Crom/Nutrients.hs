@@ -50,11 +50,7 @@ data Nutrient
     | Vitamin_B9
     | Vitamin_B12
     | Vitamin_C
-    | Vitamin_D1
-    | Vitamin_D2
-    | Vitamin_D3
-    | Vitamin_D4
-    | Vitamin_D5
+    | Vitamin_D
     | Vitamin_E
     | Vitamin_K1
     | Vitamin_K2
