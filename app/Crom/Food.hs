@@ -1,11 +1,14 @@
 module Crom.Food (
     Food(..),
     nutrients_in_ingredients,
+    season_of_ingredients,
 ) where
 
 import qualified Data.Map as M
+import qualified Data.Set as S
 import qualified Data.Text as T
 import Data.Function (on)
+import Crom.Calendar
 import Crom.Nutrients (Nutrient)
 import Crom.Units
 
@@ -17,6 +20,7 @@ data Food = Food {
     -- Used to derive nutrient content. Can be empty, usually for basic ingredients (tomato, flour, pasta..)
     ingredients :: M.Map Food MassFraction,
     recipe :: T.Text, -- Empty if no preparation is necessary.
+    season :: Season, -- Which months of the year the food is in season.
     calories :: EnergyDensity, -- Net, after discarding inedible parts.
     -- Net, after discarding inedible parts.
     -- Not necessarily the sum of ingredients, as nutrients can be altered by cooking (e.g. heat destroys vitamin C).
@@ -35,3 +39,7 @@ nutrients_in_ingredients =
     -- Nutrient fractions in one food fraction.
     nutrients_in_food :: Food -> MassFraction -> M.Map Nutrient MassFraction
     nutrients_in_food food frac = (frac .*.) <$> nutrients food
+
+-- Months during which all ingredients are in season.
+season_of_ingredients :: M.Map Food MassFraction -> Season
+season_of_ingredients = foldr (S.intersection . season) perennial . M.keys
