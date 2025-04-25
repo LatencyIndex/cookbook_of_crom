@@ -55,6 +55,7 @@ data RecommendedDailyIntake = RDI {
 
 -- For healthy adult male
 -- TODO: omega fatty acids
+    -- omega7: non-essential but beneficial
 recommended_daily_intake :: Mass -> M.Map Nutrient RecommendedDailyIntake
 recommended_daily_intake bodymass =
     -- Convenience definitions
