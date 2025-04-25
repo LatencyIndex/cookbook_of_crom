@@ -19,7 +19,6 @@ executable cookbook-of-crom
         Crom.Food
         Crom.FoodDB.Ingredients
         Crom.Nutrients
-        Crom.Shopping
         Crom.Units
         Crom.Util.Functional
         Crom.Util.Text
