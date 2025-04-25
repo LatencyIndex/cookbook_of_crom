@@ -38,15 +38,15 @@ data RecommendedDailyIntake = RDI {
 -- Source: https://en.wikipedia.org/wiki/Complete_protein#Amino_acid_profile
 protein_amino_ratios :: M.Map Nutrient MassFraction
 protein_amino_ratios = M.fromList [
-        (Amino_Tryptophan,            7 *. mg_per_g),
-        (Amino_Threonine,            27 *. mg_per_g),
-        (Amino_Isoleucine,           25 *. mg_per_g),
-        (Amino_Leucine,              55 *. mg_per_g),
-        (Amino_Lysine,               51 *. mg_per_g),
-        (Amino_MethionineCystine,    25 *. mg_per_g),
-        (Amino_PheylalanineTyrosine, 47 *. mg_per_g),
-        (Amino_Valine,               32 *. mg_per_g),
-        (Amino_Histidine,            18 *. mg_per_g)
+        (Amino_Tryptophan,             7 *. mg_per_g),
+        (Amino_Threonine,             27 *. mg_per_g),
+        (Amino_Isoleucine,            25 *. mg_per_g),
+        (Amino_Leucine,               55 *. mg_per_g),
+        (Amino_Lysine,                51 *. mg_per_g),
+        (Amino_MethionineCystine,     25 *. mg_per_g),
+        (Amino_PhenylalanineTyrosine, 47 *. mg_per_g),
+        (Amino_Valine,                32 *. mg_per_g),
+        (Amino_Histidine,             18 *. mg_per_g)
     ]
 
 -- For healthy adult male

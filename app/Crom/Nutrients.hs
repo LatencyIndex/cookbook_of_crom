@@ -33,7 +33,7 @@ data Nutrient
     | Amino_Leucine
     | Amino_Lysine
     | Amino_MethionineCystine
-    | Amino_PheylalanineTyrosine
+    | Amino_PhenylalanineTyrosine
     | Amino_Threonine
     | Amino_Tryptophan
     | Amino_Valine
