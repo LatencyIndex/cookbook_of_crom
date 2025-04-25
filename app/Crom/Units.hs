@@ -10,8 +10,8 @@ module Crom.Units (
     ug, mg, g, kg, lb,
     kJ, kcal,
     day,
-    g_per_kg, mg_per_g,
-    kcal_per_kg
+    g_per_kg, ug_per_100g, mg_per_100g, g_per_100g,
+    kcal_per_kg, kcal_per_100g, kJ_per_100g,
 ) where
 
 import Data.Function (on)
@@ -100,12 +100,16 @@ kJ = 0.23900574 *. kcal
 day :: Time
 day = Qty 1
 -- MassFraction units
-g_per_kg, mg_per_g :: MassFraction
+g_per_kg, ug_per_100g, mg_per_100g, g_per_100g :: MassFraction
 g_per_kg = g `mFracDiv` kg
-mg_per_g = mg `mFracDiv` g
+ug_per_100g = ug `mFracDiv` (100 *. g)
+mg_per_100g = mg `mFracDiv` (100 *. g)
+g_per_100g = g `mFracDiv` (100 *. g)
 -- EnergyDensity units
-kcal_per_kg :: EnergyDensity
+kcal_per_kg, kcal_per_100g, kJ_per_100g :: EnergyDensity
 kcal_per_kg = kcal ./. kg
+kcal_per_100g = kcal ./. (100 *. g)
+kJ_per_100g = kJ ./. (100 *. g)
 
 -- Shows the quantity and unit, to 3 significant digits.
 -- 'units' must be non-empty.
