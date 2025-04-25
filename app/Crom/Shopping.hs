@@ -1,7 +1,7 @@
 module Crom.Shopping where
 
 import qualified Data.Text as T
-import qualified Crom.Ingredients as I
+import qualified Crom.Food as F
 import qualified Crom.Time as Time
 
 data Price = Price {
@@ -14,7 +14,7 @@ data Price = Price {
 -- E.g. Zelene Doline 2 litre yoghurt, Polonca potatoes, Milka 250g milk chocolate..
 data Product = Product {
     name :: T.Text,
-    ingredients :: [(I.Ingredient, Float)],  -- Ingredient quantities, in mass fractions
+    ingredients :: [(F.Food, Float)],  -- Ingredient quantities, in mass fractions
     grams :: Float,
     prices :: [Price]  -- Price history
 } deriving (Show)

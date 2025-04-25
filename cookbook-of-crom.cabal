@@ -23,11 +23,10 @@ extra-source-files: CHANGELOG.md
 
 executable cookbook-of-crom
     main-is:          Main.hs
-
     -- Modules included in this executable, other than Main.
     other-modules:
         Crom.Diet
-        Crom.Ingredients
+        Crom.Food
         Crom.Nutrients
         Crom.Recipes
         Crom.Shopping
