@@ -1,4 +1,4 @@
-module Crom.Products where
+module Crom.Shopping where
 
 import qualified Data.Text as T
 import qualified Crom.Ingredients as I

@@ -29,8 +29,8 @@ executable cookbook-of-crom
         Crom.Diet
         Crom.Ingredients
         Crom.Nutrients
-        Crom.Products
         Crom.Recipes
+        Crom.Shopping
         Crom.Time
         Crom.Units
     -- LANGUAGE extensions used by modules in this package.
