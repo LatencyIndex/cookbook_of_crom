@@ -10,14 +10,14 @@ data Target
     | Maintain
     | Bulk -- Build muscle.
 
-dailyKcal :: Target -> U.Mass -> U.Energy
-dailyKcal Maintain bodymass = U.as_kcal (35 * U.to_kg bodymass)
+daily_kcal :: Target -> U.Mass -> U.Energy
+daily_kcal Maintain bodymass = U.as_kcal (35 * U.to_kg bodymass)
 -- Stronglifts says 10-15% more than TDEE: https://stronglifts.com/gain-weight/#Can_I_gain_weight_without_gaining_fat
 -- Start with 10%, then increase as needed, to minimize fat gain.
-dailyKcal Bulk bodymass = 1.10 `U.qMul` dailyKcal Maintain bodymass
+daily_kcal Bulk bodymass = 1.10 `U.qMul` daily_kcal Maintain bodymass
 -- Gaining muscle while losing weight is possible according to https://mennohenselmans.com/gain-muscle-and-lose-fat-at-the-same-time/
 -- 500-1000 calorie deficit recommended for weight loss, but 500 is plenty, especially when also training.
-dailyKcal Cut bodymass = dailyKcal Maintain bodymass `U.qSub` U.as_kcal 500
+daily_kcal Cut bodymass = daily_kcal Maintain bodymass `U.qSub` U.as_kcal 500
 
 data BiologicalRole
     = Essential
@@ -36,8 +36,8 @@ data RecommendedDailyIntake = RDI {
 -- Mass fractions of amino acids required for one mass unit of complete protein.
 -- I.e. Protein should contain at least 55mg/g of Leucine (among others) to be 'complete'.
 -- Source: https://en.wikipedia.org/wiki/Complete_protein#Amino_acid_profile
-proteinAminoRatios :: M.Map N.Nutrient Float
-proteinAminoRatios = M.fromList [
+protein_amino_ratios :: M.Map N.Nutrient Float
+protein_amino_ratios = M.fromList [
         (N.Amino_Tryptophan, 7e-3),
         (N.Amino_Threonine, 27e-3),
         (N.Amino_Isoleucine, 25e-3),
@@ -50,8 +50,8 @@ proteinAminoRatios = M.fromList [
     ]
 
 -- For healthy adult male
-recommendedDailyIntake :: U.Mass -> M.Map N.Nutrient RecommendedDailyIntake
-recommendedDailyIntake bodymass =
+recommended_daily_intake :: U.Mass -> M.Map N.Nutrient RecommendedDailyIntake
+recommended_daily_intake bodymass =
     let kgBm = U.to_kg bodymass :: Float
         -- Convenience functions
         just_g :: Float -> Maybe U.Mass
