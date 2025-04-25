@@ -16,6 +16,6 @@ data Recipe = Recipe {
 
 nutrients_per_serving :: Recipe -> M.Map N.Nutrient U.Mass
 nutrients_per_serving
-    = M.unionsWith U.qSum
+    = M.unionsWith (U..+)
     . fmap (uncurry $ flip F.nutrientsIn)
     . ingredients

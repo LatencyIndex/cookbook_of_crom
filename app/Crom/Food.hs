@@ -17,5 +17,5 @@ data Food = Food {
 
 -- Amount of nutrients in a certain mass of an ingredient.
 nutrientsIn :: U.Mass -> Food -> M.Map N.Nutrient U.Mass
-nutrientsIn mass = fmap (U.qMul nb_100g) . nutrients_per_100g
-    where nb_100g = mass `U.qDiv` U.as_g 100
+nutrientsIn mass = fmap (nb_100g U..*) . nutrients_per_100g
+    where nb_100g = mass U../ U.as_g 100

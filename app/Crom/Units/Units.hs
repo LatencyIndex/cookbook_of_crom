@@ -1,10 +1,10 @@
 module Crom.Units.Units (
     Quantity(..),
     Unit(..),
-    qMul,
-    qDiv,
-    qSum,
-    qSub
+    (.*),
+    (./),
+    (.+),
+    (.-)
 ) where
 
 data Quantity u = Qty {num :: Float, unit :: u}
@@ -23,16 +23,17 @@ class Unit a where
     convert_to :: a -> Quantity a -> Quantity a
     convert_to w (Qty x u) = Qty ((u `in_units_of` w)*x) w
 
-qMul :: Float -> Quantity a -> Quantity a
-qMul k (Qty x u) = Qty (k*x) u
+(.*) :: Float -> Quantity a -> Quantity a
+k .* (Qty x u) = Qty (k*x) u
 
-qDiv :: Unit a => Quantity a -> Quantity a -> Float
-qDiv l r = num l / (num $ convert_to (unit l) r)
 
-qSum :: Unit a => Quantity a -> Quantity a -> Quantity a
-qSum l r = Qty (num l + (num $ convert_to u r)) u
+(./) :: Unit a => Quantity a -> Quantity a -> Float
+l ./ r = num l / (num $ convert_to (unit l) r)
+
+(.+) :: Unit a => Quantity a -> Quantity a -> Quantity a
+l .+ r = Qty (num l + (num $ convert_to u r)) u
     where u = unit l
 
-qSub :: Unit a => Quantity a -> Quantity a -> Quantity a
-qSub l r = Qty (num l - (num $ convert_to u r)) u
+(.-) :: Unit a => Quantity a -> Quantity a -> Quantity a
+l .- r = Qty (num l - (num $ convert_to u r)) u
     where u = unit l
