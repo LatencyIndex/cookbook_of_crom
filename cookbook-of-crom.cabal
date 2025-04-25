@@ -28,6 +28,8 @@ executable cookbook-of-crom
         Crom.Calendar
         Crom.Diet
         Crom.Food
+        Crom.FoodDB.Ingredients
+        Crom.FoodDB.Parsing.USDA
         Crom.Nutrients
         Crom.Shopping
         Crom.Units
@@ -37,13 +39,17 @@ executable cookbook-of-crom
     -- other-extensions:
     default-extensions:
         OverloadedRecordDot
-        -- Implicitly convert String literals to Data.Text
         OverloadedStrings
         DuplicateRecordFields
     build-depends:
+        aeson,
+        aeson-pretty,
         base,
+        bytestring,
         containers,
-        text
+        scientific,
+        text,
+        vector
     hs-source-dirs:   app
     default-language: Haskell2010
     ghc-options:
