@@ -10,8 +10,8 @@ data Recipe = Recipe {
     result :: F.Food,
     ingredients :: [(F.Food, U.Mass)], -- Quantities for a single serving. Usable fraction only.
     instructions :: T.Text,
-    preparation_mins :: Float, -- Active preparation time, excluding unattended parts.
-    persistence_days :: Float -- How long the meal keeps, in fridge or freezer.
+    preparation_time :: U.Duration, -- Active preparation time, excluding unattended parts.
+    persistence_time :: U.Duration -- How long the meal keeps, in fridge or freezer.
 } deriving (Show)
 
 nutrientsPerServing :: Recipe -> M.Map N.Nutrient U.Mass
