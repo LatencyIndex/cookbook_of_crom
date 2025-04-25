@@ -7,9 +7,9 @@ import qualified Crom.Nutrients as N
 import qualified Crom.Units as U
 
 data Recipe = Recipe {
-    name :: T.Text,
-    instructions :: T.Text,
+    result :: F.Food,
     ingredients :: [(F.Food, U.Mass)], -- Quantities for a single serving. Usable fraction only.
+    instructions :: T.Text,
     preparation_mins :: Float, -- Active preparation time, excluding unattended parts.
     persistence_days :: Float -- How long the meal keeps, in fridge or freezer.
 } deriving (Show)
