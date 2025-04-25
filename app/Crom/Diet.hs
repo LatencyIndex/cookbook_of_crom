@@ -113,14 +113,16 @@ recommended_daily_intake bodymass =
     -- https://en.wikipedia.org/wiki/Zinc#Nutrition
     (Element_Zn, RDI Essential "US max is 40mg, EU is 25mg." Nothing (just_mg 11) (just_mg 25)),
     -- Protein amino acids
+    -- (Amino_Cysteine),
     -- (Amino_Histidine),
     -- (Amino_Isoleucine),
     -- (Amino_Leucine),
     -- (Amino_Lysine),
-    -- (Amino_MethionineCystine),
-    -- (Amino_PhenylalanineTyrosine),
+    -- (Amino_Methionine),
+    -- (Amino_Phenylalanine),
     -- (Amino_Threonine),
     -- (Amino_Tryptophan),
+    -- (Amino_Tyrosine),
     -- (Amino_Valine),
     -- Vitamins: https://en.wikipedia.org/wiki/Vitamin#List_of_vitamins
     (Vitamin_A,   RDI Essential "" Nothing (just_ug 900) (just_ug 3000)),
@@ -151,13 +153,14 @@ recommended_daily_intake bodymass =
     (Vitamin_K1,  RDI Essential "" Nothing (just_ug 110) Nothing),
     (Vitamin_K2,  RDI Essential "" Nothing (just_ug 110) Nothing),
     -- Misc
+    -- (Cholesterol)
     -- https://en.wikipedia.org/wiki/Choline#Dietary_recommendations
     (Choline, RDI Essential "" Nothing (just_mg 550) Nothing),
-    -- https://www.webmd.com/diet/collagen-health-benefits
-    (Collagen, RDI Beneficial "" Nothing (just_g 2.5) (just_g 15)),
     -- https://en.wikipedia.org/wiki/Coenzyme_Q10
     (Coenzyme_Q10, RDI Beneficial "Based on weak evidence. Obtained mostly as supplement."
         Nothing (just_mg 100) (just_mg 1200)),
+    -- https://www.webmd.com/diet/collagen-health-benefits
+    (Collagen, RDI Beneficial "" Nothing (just_g 2.5) (just_g 15)),
     -- https://examine.com/supplements/Creatine/
     (Creatine, RDI Beneficial "Ideally in monohydrate form. 25g/day during 1st week."
         Nothing (Just (0.06 *. g_per_kg .*. bodymass)) Nothing)
