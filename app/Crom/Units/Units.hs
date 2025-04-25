@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Crom.Units.Units (
     Quantity(..),
     Unit(..),
@@ -13,15 +15,14 @@ instance Show u => Show (Quantity u) where
 
 -- Class for units of the same dimension, e.g. mass or length.
 class Unit a where
-    -- This can be defined directly, by implementing x `in_units_of` CanonicalUnit for every x
-    -- (e.g. x `in_units_of` U_kg), and then implement conversion between every pair of units
-    -- as the ratio of conversions to CanonicalUnit. However, because the ratio definition has
-    -- a pattern of x `in_units_of` y, it will match every pattern, so no warning is emitted if
-    -- some conversions to CanonicalUnit are missing. So in_units_of should be implemented through
-    -- a toCanonical :: a -> Float helper function, to get a warning if any cases are missing.
-    in_units_of :: a -> a -> Float
+    canonical :: a -- The default/preferred unit. E.g. g for mass (and not kg or mg)
+    -- If canonical = g, then in_canonical mg = 0.001, in_canonical g = 1, and in_canonical kg = 1000
+    in_canonical :: a -> Float
     convert_to :: a -> Quantity a -> Quantity a
-    convert_to w (Qty x u) = Qty ((u `in_units_of` w)*x) w
+    convert_to w (Qty x u) = Qty (x * u `in_units_of` w) w where
+        -- kg `in_units_of` g = 1000
+        in_units_of :: a -> a -> Float
+        u `in_units_of` w = in_canonical u / in_canonical w
 
 (.*) :: Float -> Quantity a -> Quantity a
 k .* (Qty x u) = Qty (k*x) u

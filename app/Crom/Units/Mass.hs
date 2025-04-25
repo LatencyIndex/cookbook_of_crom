@@ -22,15 +22,13 @@ instance Show MassUnit where
     show U_ug = "ug"
     show U_lb = "lb"
 type Mass = Quantity MassUnit
-
 instance Unit MassUnit where
-    x `in_units_of` y = in_grams x / in_grams y where
-        in_grams :: MassUnit -> Float
-        in_grams U_kg = 1e+3
-        in_grams U_g  = 1
-        in_grams U_mg = 1e-3
-        in_grams U_ug = 1e-6
-        in_grams U_lb = 453.59237
+    canonical = U_g
+    in_canonical U_kg = 1e+3
+    in_canonical U_g  = 1
+    in_canonical U_mg = 1e-3
+    in_canonical U_ug = 1e-6
+    in_canonical U_lb = 453.59237
 
 -- Convenience conversion functions
 
