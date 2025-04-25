@@ -77,7 +77,7 @@ recommended_daily_intake bodymass =
     -- Minerals/elements
     -- https://en.wikipedia.org/wiki/Boron#Biological_role
     (Element_B, RDI Uncertain "Lower limit is very uncertain." Nothing Nothing (just_mg 20)),
-    -- Not sure what to do about carbon lol
+    -- Can safely ignore carbon
     -- (Element_C),
     -- https://en.wikipedia.org/wiki/Calcium#Biological_and_pathological_role
     (Element_Ca, RDI Essential "" Nothing (just_g 1) Nothing),
