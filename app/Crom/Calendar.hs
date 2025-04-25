@@ -1,7 +1,6 @@
 module Crom.Calendar (
-    Month,
+    Month(..),
     Date,
-    Season,
     perennial
 ) where
 
@@ -25,7 +24,5 @@ data Month
 data Date = Date {year :: Int, month :: Month, day :: Int}
     deriving Show
 
-type Season = S.Set Month
-
-perennial :: Season
-perennial = S.fromList [minBound, maxBound]
+perennial :: S.Set Month
+perennial = S.fromList [minBound .. maxBound]

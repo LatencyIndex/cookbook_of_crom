@@ -22,7 +22,7 @@ data Food = Food {
     -- Used to derive nutrient content. Can be empty, usually for basic ingredients (tomato, flour, pasta..)
     ingredients :: M.Map Food MassFraction,
     recipe :: T.Text, -- Empty if no preparation is necessary.
-    season :: Season, -- Which months of the year the food is in season.
+    season :: S.Set Month, -- Which months of the year the food is in season.
     calories :: Maybe EnergyDensity, -- Net, after discarding inedible parts. 'Maybe' to handle missing data.
     -- Net, after discarding inedible parts.
     -- Not necessarily the sum of ingredients, as nutrients can be altered by cooking (e.g. heat destroys vitamin C).
@@ -33,7 +33,7 @@ instance Eq Food where (==) = (==) `on` name
 instance Ord Food where compare = compare `on` name
 
 -- Months during which all ingredients are in season.
-derive_season :: M.Map Food MassFraction -> Season
+derive_season :: M.Map Food MassFraction -> S.Set Month
 derive_season = foldr (S.intersection . season) perennial . M.keys
 
 -- Calory density of combined ingredients.
