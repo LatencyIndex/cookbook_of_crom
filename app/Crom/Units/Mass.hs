@@ -1,10 +1,9 @@
 module Crom.Units.Mass (
-    MassUnit,
-    Mass,
-    as_g,
-    as_mg,
-    as_ug,
-    in_kg
+    MassUnit, Mass,
+    in_kg, as_kg,
+    in_g, as_g,
+    in_mg, as_mg,
+    in_ug, as_ug
 ) where
 
 import Crom.Units.Units
