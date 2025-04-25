@@ -54,6 +54,7 @@ data RecommendedDailyIntake = RDI {
 -- Histidine                 18 *. mg_per_g
 
 -- For healthy adult male
+-- TODO: omega fatty acids
 recommended_daily_intake :: Mass -> M.Map Nutrient RecommendedDailyIntake
 recommended_daily_intake bodymass =
     -- Convenience definitions
@@ -63,7 +64,8 @@ recommended_daily_intake bodymass =
         just_ug = Just . (ug .*)
     in M.fromList [
     -- Macronutrients
-    -- (Carbohydrate),
+    -- (Carbohydrates),
+    -- (Sugars),
     -- (Fat),
     -- According to EFSA: https://en.wikipedia.org/wiki/Dietary_fiber#Dietary_recommendations
     (Fiber, RDI Beneficial ""

@@ -1,10 +1,10 @@
 module Crom.Nutrients where
 
 -- Nutrients need database with recommended daily dose, etc.
--- TODO: put omega3 fatty acids somewhere.
 data Nutrient
     -- Macronutrients
-    = Carbohydrate
+    = Carbohydrates -- Including sugars
+    | Sugars
     | Fat
     | Fiber
     | Protein -- Undefined whether complete or not.
@@ -39,6 +39,11 @@ data Nutrient
     | Amino_Tryptophan
     | Amino_Tyrosine
     | Amino_Valine
+    -- Omega fatty acids
+    | Omega3
+    | Omega6
+    | Omega7
+    | Omega9
     -- Vitamins
     | Vitamin_A
     | Vitamin_B1
