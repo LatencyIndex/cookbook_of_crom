@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleInstances, FunctionalDependencies #-}
 
+-- A simple implementation of compile-time physical units.
 module Crom.Units (
     Mass, Energy, Time,
     MassFraction, EnergyDensity,
