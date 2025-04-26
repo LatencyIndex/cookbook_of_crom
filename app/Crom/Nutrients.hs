@@ -7,7 +7,7 @@ data Nutrient
     | Sugars
     | Fat
     | Fiber
-    | Protein -- Undefined whether complete or not.
+    | Protein -- Both complete and incomplete
     | CompleteProtein
     -- Minerals/elements (ignoring carbon)
     | Element_B
