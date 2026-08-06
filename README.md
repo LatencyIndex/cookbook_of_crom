@@ -10,3 +10,4 @@ Shall use usda_parser to generate Haskell source modules with nutrient content f
 - [ ] Show nutrient deficits and excesses for a given diet
 - [ ] Create meal plan for N days
 - [ ] Filter recipes by available ingredients
+- [ ] Filter recipes by diet - omnivore, vegetarian, vegan, allergies, gluten, etc.
