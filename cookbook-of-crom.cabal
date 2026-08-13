@@ -23,9 +23,9 @@ executable cookbook-of-crom
         Crom.Util.Functional
         Crom.Util.Text
     default-extensions:
+        DuplicateRecordFields
         OverloadedRecordDot
         OverloadedStrings
-        DuplicateRecordFields
     build-depends:
         base,
         containers,
