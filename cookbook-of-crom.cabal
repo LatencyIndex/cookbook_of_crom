@@ -30,6 +30,7 @@ executable cookbook-of-crom
         OverloadedStrings
     build-depends:
         aeson,
+        aeson-pretty,
         base,
         bytestring,
         conduit,
