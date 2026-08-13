@@ -1,4 +1,7 @@
 # Build output
 /dist-newstyle/
+
 # emacs auxiliary files
 **/.projectile-cache.eld
+
+/data/
