@@ -21,9 +21,9 @@ executable cookbook-of-crom
         Crom.Nutrients
         Crom.Units
         Crom.Util.Functional
-        Crom.Util.JSON
-        Crom.Util.JSON.NTrie
         Crom.Util.Text
+        Ibis.JSON
+        Ibis.JSON.NTrie
     default-extensions:
         DuplicateRecordFields
         OverloadedRecordDot

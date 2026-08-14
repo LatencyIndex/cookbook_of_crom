@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 
-module Crom.Util.JSON.NTrie (
+module Ibis.JSON.NTrie (
     JNode,
     NTrie,
     fromJSON,
@@ -11,16 +11,16 @@ module Crom.Util.JSON.NTrie (
 ) where
 
 import Conduit
+import Control.DeepSeq (NFData, force)
+import qualified Data.Aeson.KeyMap as KM
+import qualified Data.Aeson.Types as T
 import qualified Data.ByteString as B
 import Data.Conduit.Aeson
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
-import Control.DeepSeq (NFData, force)
-import GHC.Generics (Generic)
-import qualified Data.Aeson.KeyMap as KM
-import qualified Data.Aeson.Types as T
 import qualified Data.Map.Strict as M
-import Crom.Util.JSON (trimArray)
+import GHC.Generics (Generic)
+import Ibis.JSON (trimArray)
 
 data JNode
     = Nil

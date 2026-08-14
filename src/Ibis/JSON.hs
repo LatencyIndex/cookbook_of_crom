@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeApplications #-}
 
-module Crom.Util.JSON (
+module Ibis.JSON (
     trimArray,
     prettyPrintArray,
 ) where
