@@ -39,8 +39,8 @@ type EnergyDensity = Qty DEnergyDensity
 (.-.) :: Qty a -> Qty a -> Qty a
 (Qty x) .-. (Qty y) = Qty (x-y)
 
-instance Eq        (Qty a) where (==) = (==) `on` val
-instance Ord       (Qty a) where compare = compare `on` val
+instance Eq        (Qty a) where (==) = (==) `on` (.val)
+instance Ord       (Qty a) where compare = compare `on` (.val)
 instance Semigroup (Qty a) where (<>) = (.+.)
 instance Monoid    (Qty a) where mempty = Qty 0
 

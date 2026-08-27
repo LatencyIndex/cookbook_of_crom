@@ -29,18 +29,18 @@ data Food = Food {
     nutrients :: M.Map Nutrient MassFraction
 } deriving (Show)
 
-instance Eq Food where (==) = (==) `on` name
-instance Ord Food where compare = compare `on` name
+instance Eq Food where (==) = (==) `on` (.name)
+instance Ord Food where compare = compare `on` (.name)
 
 -- Months during which all ingredients are in season.
 derive_season :: M.Map Food MassFraction -> S.Set Month
-derive_season = foldr (S.intersection . season) perennial . M.keys
+derive_season = foldr (S.intersection . (.season)) perennial . M.keys
 
 -- Calory density of combined ingredients.
 derive_calories :: M.Map Food MassFraction -> EnergyDensity
 derive_calories = mconcat . M.elems . M.mapWithKey (\food frac -> get_calories food .*. frac) where
     get_calories :: Food -> EnergyDensity
-    get_calories = fromMaybe mempty . calories
+    get_calories = fromMaybe mempty . (.calories)
 
 -- Nutrient fractions of combined ingredients.
 derive_nutrients :: M.Map Food MassFraction -> M.Map Nutrient MassFraction
@@ -50,4 +50,4 @@ derive_nutrients =
     where
     -- Nutrient fractions in one food fraction.
     nutrients_in_food :: Food -> MassFraction -> M.Map Nutrient MassFraction
-    nutrients_in_food food frac = (frac .*.) <$> nutrients food
+    nutrients_in_food food frac = (frac .*.) <$> food.nutrients

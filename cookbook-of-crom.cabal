@@ -27,6 +27,7 @@ executable cookbook-of-crom
         Ibis.JSON.Explore
     default-extensions:
         DuplicateRecordFields
+        NoFieldSelectors
         OverloadedRecordDot
         OverloadedStrings
     build-depends:
