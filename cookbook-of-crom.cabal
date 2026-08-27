@@ -22,7 +22,7 @@ executable cookbook-of-crom
         Crom.Units
         Crom.Util.Functional
         Crom.Util.Text
-        Ibis.Data.NTrie
+        Ibis.Data.MultiTrie
         Ibis.JSON
         Ibis.JSON.Explore
     default-extensions:

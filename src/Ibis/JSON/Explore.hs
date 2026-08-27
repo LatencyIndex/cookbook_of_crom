@@ -12,7 +12,7 @@ import Data.Conduit.Aeson
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
 import qualified Data.Map.Strict as M
-import Ibis.Data.NTrie
+import Ibis.Data.MultiTrie
 import Ibis.JSON (trimArray)
 
 data JNode
@@ -32,24 +32,24 @@ instance Show JNode where
     show Arr = "Arr"
     show (Key k) = show k
 
-fromJSON :: T.Value -> NTrie JNode
+fromJSON :: T.Value -> MultiTrie JNode
 fromJSON (T.String _) = singleton Str
 fromJSON (T.Number _) = singleton Num
 fromJSON (T.Bool _) = singleton Bit
 fromJSON T.Null = singleton Nil
-fromJSON (T.Array xs) = NTrie $ M.singleton Arr (1, children)
+fromJSON (T.Array xs) = MultiTrie $ M.singleton Arr (1, children)
   where
-    children :: NTrie JNode
+    children :: MultiTrie JNode
     children = foldMap fromJSON xs
-fromJSON (T.Object xs) = NTrie $ M.fromList children
+fromJSON (T.Object xs) = MultiTrie $ M.fromList children
   where
-    children :: [(JNode, (Int, NTrie JNode))]
+    children :: [(JNode, (Int, MultiTrie JNode))]
     children = (\(k, v) -> (Key k, (1, fromJSON v))) <$> KM.toList xs
 
--- Collect the first n json values in the given json array into a NTrie.
+-- Collect the first n json values in the given json array into a MultiTrie.
 -- Uses Conduit to process the json one at a time,
 -- so that large arrays can be processed without using too much memory.
-fromJSONArray :: Maybe Int -> B.ByteString -> NTrie JNode
+fromJSONArray :: Maybe Int -> B.ByteString -> MultiTrie JNode
 fromJSONArray n json =
     runConduitPure $
         yield (trimArray json)
