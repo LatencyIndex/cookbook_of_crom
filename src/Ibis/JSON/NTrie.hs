@@ -1,6 +1,3 @@
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric #-}
-
 module Ibis.JSON.NTrie (
     JNode,
     NTrie,
@@ -11,7 +8,6 @@ module Ibis.JSON.NTrie (
 ) where
 
 import Conduit
-import Control.DeepSeq (NFData, force)
 import qualified Data.Aeson.KeyMap as KM
 import qualified Data.Aeson.Types as T
 import qualified Data.ByteString as B
@@ -19,7 +15,6 @@ import Data.Conduit.Aeson
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
 import qualified Data.Map.Strict as M
-import GHC.Generics (Generic)
 import Ibis.JSON (trimArray)
 
 data JNode
@@ -29,7 +24,7 @@ data JNode
     | Str
     | Arr
     | Key T.Key
-    deriving (Eq, Ord, Generic, NFData)
+    deriving (Eq, Ord)
 
 instance Show JNode where
     show Nil = "Nil"
@@ -39,20 +34,23 @@ instance Show JNode where
     show Arr = "Arr"
     show (Key k) = show k
 
+-- Strict version of (,)
+pair' :: a -> b -> (a, b)
+pair' a b = a `seq` b `seq` (a, b)
+
 -- Trie that counts the number of strings, i.e. a multi-trie.
 -- A NTrie node is a set of keys, the counts of each key
 -- (the number of strings that end with that key),
 -- and the child trie of each key.
 newtype NTrie k = NTrie (M.Map k (Int, NTrie k))
-    deriving (Generic, NFData)
 
-instance (Ord k, NFData k) => Semigroup (NTrie k) where
-    -- Strict evaluation to prevent memory leak when doing large folds.
-    (NTrie x) <> (NTrie y) = force $ NTrie $ M.unionWith f x y
+instance (Ord k) => Semigroup (NTrie k) where
+    (NTrie x) <> (NTrie y) = NTrie $ M.unionWith f x y
       where
-        f (i, lChild) (j, rChild) = (i + j, lChild <> rChild)
+        -- Strict evaluation to prevent memory leak during large folds.
+        f (i, lChild) (j, rChild) = pair' (i + j) (lChild <> rChild)
 
-instance (Ord k, NFData k) => Monoid (NTrie k) where
+instance (Ord k) => Monoid (NTrie k) where
     mempty = NTrie M.empty
 
 singleton :: k -> NTrie k

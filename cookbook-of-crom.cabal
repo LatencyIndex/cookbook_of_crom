@@ -36,7 +36,6 @@ executable cookbook-of-crom
         conduit,
         conduit-aeson,
         containers,
-        deepseq,
         extra,
         text,
     hs-source-dirs:   src
