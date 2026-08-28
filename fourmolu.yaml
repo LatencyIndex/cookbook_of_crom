@@ -1,0 +1,2 @@
+# Autoformat config. For more information, see: https://fourmolu.github.io/config/
+comma-style: trailing
