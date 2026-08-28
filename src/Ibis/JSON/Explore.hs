@@ -7,11 +7,11 @@ module Ibis.JSON.Explore (
 import Conduit
 import qualified Data.Aeson.KeyMap as KM
 import qualified Data.Aeson.Types as T
+import Data.Bifunctor (bimap)
 import qualified Data.ByteString as B
 import Data.Conduit.Aeson
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
-import qualified Data.Map.Strict as M
 import Ibis.Data.MultiTrie
 import Ibis.JSON (trimArray)
 
@@ -37,14 +37,14 @@ fromJSON (T.String _) = singleton Str
 fromJSON (T.Number _) = singleton Num
 fromJSON (T.Bool _) = singleton Bit
 fromJSON T.Null = singleton Nil
-fromJSON (T.Array xs) = MultiTrie $ M.singleton Arr (1, children)
+fromJSON (T.Array xs) = fromList [(Arr, children)]
   where
     children :: MultiTrie JNode
     children = foldMap fromJSON xs
-fromJSON (T.Object xs) = MultiTrie $ M.fromList children
+fromJSON (T.Object xs) = fromList children
   where
-    children :: [(JNode, (Int, MultiTrie JNode))]
-    children = (\(k, v) -> (Key k, (1, fromJSON v))) <$> KM.toList xs
+    children :: [(JNode, MultiTrie JNode)]
+    children = bimap Key fromJSON <$> KM.toList xs
 
 -- Collect the first n json values in the given json array into a MultiTrie.
 -- Uses Conduit to process the json one at a time,
