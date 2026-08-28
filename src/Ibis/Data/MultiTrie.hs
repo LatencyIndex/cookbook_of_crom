@@ -10,8 +10,9 @@ module Ibis.Data.MultiTrie (
 import qualified Data.Map.Strict as M
 
 data Node k = Node
-    { -- | Number of trie keys that terminate in this node
+    { -- | Number of trie strings that terminate in the key this node is stored at.
       count :: Int,
+      -- | Subtree whose parent is the key under which this node is stored.
       children :: MultiTrie k
     }
 
@@ -23,6 +24,7 @@ instance (Ord k) => Semigroup (Node k) where
         children = lChild <> rChild
 
 -- | Trie that counts the number of strings.
+-- Keys represent individual characters of the stored strings.
 newtype MultiTrie k = MultiTrie (M.Map k (Node k))
 
 instance (Ord k) => Semigroup (MultiTrie k) where
