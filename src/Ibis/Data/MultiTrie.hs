@@ -22,10 +22,7 @@ instance (Ord k) => Semigroup (Node k) where
         count = i + j
         children = lChild <> rChild
 
--- Trie that counts the number of strings, i.e. a multi-trie.
--- A MultiTrie node is a set of keys, the counts of each key
--- (the number of strings that end with that key),
--- and the child trie of each key.
+-- | Trie that counts the number of strings.
 newtype MultiTrie k = MultiTrie (M.Map k (Node k))
 
 instance (Ord k) => Semigroup (MultiTrie k) where
@@ -34,19 +31,19 @@ instance (Ord k) => Semigroup (MultiTrie k) where
 instance (Ord k) => Monoid (MultiTrie k) where
     mempty = MultiTrie M.empty
 
--- Build MultiTrie from root-level nodes.
+-- | Build MultiTrie from root-level nodes.
 fromList :: (Ord k) => [(k, MultiTrie k)] -> MultiTrie k
 fromList = MultiTrie . M.fromList . fmap (Node 1 <$>)
 
--- MultiTrie containing a single key.
+-- | MultiTrie containing a single key.
 singleton :: (Ord k) => k -> MultiTrie k
 singleton k = fromList [(k, mempty)]
 
--- Number of nodes in the trie.
+-- | Number of nodes in the trie.
 size :: MultiTrie k -> Int
 size (MultiTrie kvs) = M.size kvs + sum (size . (.children) <$> M.elems kvs)
 
--- Pretty-prints the trie, using relative counts - the probability a parent contains a given child.
+-- | Pretty-print the trie, using relative counts - the probability a parent contains a given child.
 printFreqs :: (Show k) => MultiTrie k -> IO ()
 printFreqs = pprint 0 1
   where
