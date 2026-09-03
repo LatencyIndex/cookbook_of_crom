@@ -15,6 +15,8 @@ import Data.Either.Extra (eitherToMaybe)
 import qualified Ibis.Data.MultiTrie as M
 import Ibis.JSON (trimArray)
 
+-- | Represents the type of a JSON value, ignoring its value.
+-- Useful to explore JSON structure.
 data JNode
     = Nil
     | Bit
@@ -46,8 +48,8 @@ fromJSON (T.Object xs) = mconcat $ uncurry M.singleton <$> children
     children :: [(JNode, M.Forest JNode Int)]
     children = bimap Key fromJSON <$> KM.toList xs
 
--- Collect the first n json values in the given json array into a MultiTrie.
--- Uses Conduit to process the json one at a time,
+-- | Collect the first n JSON values in the JSON array into a MultiTrie.
+-- Uses Conduit to process the JSON one at a time,
 -- so that large arrays can be processed without using too much memory.
 fromJSONArray :: Maybe Int -> B.ByteString -> M.Forest JNode Int
 fromJSONArray n json =
@@ -60,4 +62,5 @@ fromJSONArray n json =
             -- Skip any JSON that fails decoding.
             .| mapC eitherToMaybe
             .| catMaybes
+            -- Convert to JNode MultiTrie and monoidally collapse it.
             .| foldMapC fromJSON
