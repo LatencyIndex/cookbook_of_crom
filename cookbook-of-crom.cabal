@@ -30,6 +30,7 @@ executable cookbook-of-crom
         NoFieldSelectors
         OverloadedRecordDot
         OverloadedStrings
+        ScopedTypeVariables
     build-depends:
         aeson,
         aeson-pretty,
