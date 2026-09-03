@@ -1,5 +1,5 @@
 module Ibis.JSON.Explore (
-    JNode,
+    JSType,
     fromJSON,
     fromJSONArray,
 ) where
@@ -16,8 +16,8 @@ import qualified Ibis.Data.MultiTrie as M
 import Ibis.JSON (trimArray)
 
 -- | Represents the type of a JSON value, ignoring its value.
--- Useful to explore JSON structure.
-data JNode
+-- Useful for exploring JSON structure.
+data JSType
     = Nil
     | Bit
     | Num
@@ -26,7 +26,7 @@ data JNode
     | Key T.Key
     deriving (Eq, Ord)
 
-instance Show JNode where
+instance Show JSType where
     show Nil = "Nil"
     show Bit = "Bit"
     show Num = "Num"
@@ -34,24 +34,24 @@ instance Show JNode where
     show Arr = "Arr"
     show (Key k) = show k
 
-fromJSON :: T.Value -> M.Forest JNode Int
+fromJSON :: T.Value -> M.Forest JSType Int
 fromJSON (T.String _) = M.leaf Str
 fromJSON (T.Number _) = M.leaf Num
 fromJSON (T.Bool _) = M.leaf Bit
 fromJSON T.Null = M.leaf Nil
 fromJSON (T.Array xs) = M.singleton Arr children
   where
-    children :: M.Forest JNode Int
+    children :: M.Forest JSType Int
     children = foldMap fromJSON xs
 fromJSON (T.Object xs) = mconcat $ uncurry M.singleton <$> children
   where
-    children :: [(JNode, M.Forest JNode Int)]
+    children :: [(JSType, M.Forest JSType Int)]
     children = bimap Key fromJSON <$> KM.toList xs
 
 -- | Collect the first n JSON values in the JSON array into a MultiTrie.
 -- Uses Conduit to process the JSON one at a time,
 -- so that large arrays can be processed without using too much memory.
-fromJSONArray :: Maybe Int -> B.ByteString -> M.Forest JNode Int
+fromJSONArray :: Maybe Int -> B.ByteString -> M.Forest JSType Int
 fromJSONArray n json =
     runConduitPure $
         yield (trimArray json)
@@ -62,5 +62,5 @@ fromJSONArray n json =
             -- Skip any JSON that fails decoding.
             .| mapC eitherToMaybe
             .| catMaybes
-            -- Convert to JNode MultiTrie and monoidally collapse it.
+            -- Convert to JSType MultiTrie and monoidally collapse it.
             .| foldMapC fromJSON
