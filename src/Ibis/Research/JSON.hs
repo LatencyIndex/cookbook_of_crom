@@ -1,7 +1,6 @@
 {-# LANGUAGE TypeApplications #-}
 
-module Ibis.JSON (
-    trimArray,
+module Ibis.Research.JSON (
     prettyPrintArray,
 ) where
 
@@ -9,15 +8,11 @@ import Conduit (mapC, mapM_C, runConduit, takeC, yield, (.|))
 import Data.Aeson (Value)
 import qualified Data.Aeson.Encode.Pretty as P
 import qualified Data.ByteString as B
-import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString.Lazy as BL
 import Data.Conduit.Aeson (conduitArrayEither)
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
-
--- Drop everything outside the outer-most []
-trimArray :: B.ByteString -> B.ByteString
-trimArray = C.dropWhileEnd (/= ']') . C.dropWhile (/= '[')
+import Ibis.Data.JSON (trimArray)
 
 -- Pretty-prints the 1st n JSON values from a JSON array.
 -- Uses Conduit to parse the values one at a time,

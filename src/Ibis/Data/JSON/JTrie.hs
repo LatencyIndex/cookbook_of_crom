@@ -1,4 +1,4 @@
-module Ibis.JSON.Explore (
+module Ibis.Data.JSON.JTrie (
     JSType,
     fromJSON,
     fromJSONArray,
@@ -13,7 +13,7 @@ import Data.Conduit.Aeson
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
 import qualified Ibis.Data.MultiTrie as M
-import Ibis.JSON (trimArray)
+import Ibis.Data.JSON (trimArray)
 
 -- | Represents the type of a JSON value, ignoring its value.
 -- Useful for exploring JSON structure.

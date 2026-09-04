@@ -22,9 +22,10 @@ executable cookbook-of-crom
         Crom.Units
         Crom.Util.Functional
         Crom.Util.Text
+        Ibis.Data.JSON
+        Ibis.Data.JSON.JTrie
         Ibis.Data.MultiTrie
-        Ibis.JSON
-        Ibis.JSON.Explore
+        Ibis.Research.JSON
     default-extensions:
         DuplicateRecordFields
         NoFieldSelectors
