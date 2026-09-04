@@ -14,7 +14,7 @@ import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
 import Ibis.Data.JSON (trimArray)
 
--- Pretty-prints the 1st n JSON values from a JSON array.
+-- | Pretty-print the first n JSON values from a JSON array.
 -- Uses Conduit to parse the values one at a time,
 -- so it uses little memory even for very large arrays.
 prettyPrintArray :: Maybe Int -> B.ByteString -> IO ()
