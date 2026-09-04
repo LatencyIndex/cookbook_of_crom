@@ -2,6 +2,7 @@
 
 module Ibis.Research.JSON (
     prettyPrintArray,
+    printProbabilityTrie,
 ) where
 
 import Conduit (mapC, mapM_C, runConduit, takeC, yield, (.|))
@@ -13,6 +14,8 @@ import Data.Conduit.Aeson (conduitArrayEither)
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
 import Ibis.Data.JSON (trimArray)
+import qualified Ibis.Data.JSON.JTrie as JT
+import qualified Ibis.Data.MultiTrie as MT
 
 -- | Pretty-print the first n JSON values from a JSON array.
 -- Uses Conduit to parse the values one at a time,
@@ -28,3 +31,8 @@ prettyPrintArray n json =
             .| mapC eitherToMaybe
             .| catMaybes
             .| mapM_C (BL.putStr . P.encodePretty)
+
+-- | Convert the first n JSON values to a probability trie and print it,
+-- showing the kinds of values and their likelihoods, given their parent exists.
+printProbabilityTrie :: Maybe Int -> B.ByteString -> IO ()
+printProbabilityTrie n json = print $ MT.toProbabilities $ JT.fromJSONArray n json
