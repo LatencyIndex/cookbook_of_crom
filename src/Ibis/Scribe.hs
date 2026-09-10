@@ -1,3 +1,4 @@
+-- | Module for compiling the food nutrient database, and serializing it.
 module Ibis.Scribe (
     scribeDatabase,
 ) where
