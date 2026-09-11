@@ -26,6 +26,7 @@ executable cookbook-of-crom
         Ibis.Data.JSON.JTrie
         Ibis.Data.MultiTrie
         Ibis.Data.Zip
+        Ibis.Read
         Ibis.Research
         Ibis.Research.JSON
         Ibis.Scribe
