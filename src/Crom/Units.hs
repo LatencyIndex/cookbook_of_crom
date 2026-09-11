@@ -122,7 +122,7 @@ qShow units q = showSigDigits 3 (q ./. uval) ++ " " ++ uname where
     largest = maximum (smallest : smaller)
     (uval, uname) = largest
 
-instance Show Mass          where show   = qShow [(ug, "ug"), (mg, "mg"), (g, "g"), (kg, "kg")]
+instance Show Mass          where show   = qShow [(ug, "µg"), (mg, "mg"), (g, "g"), (kg, "kg")]
 instance Show Energy        where show   = qShow [(kcal, "kcal")]
 instance Show Time          where show   = qShow [(day, "days")]
 instance Show MassFraction  where show x = show (x .* 100 .*. g) ++ " / 100 g"
