@@ -22,6 +22,9 @@ executable cookbook-of-crom
         Crom.Units
         Crom.Util.Functional
         Crom.Util.Text
+        Ibis.Compile
+        Ibis.Compile.Nutrients
+        Ibis.Compile.Units
         Ibis.Data.JSON
         Ibis.Data.JSON.JTrie
         Ibis.Data.MultiTrie
