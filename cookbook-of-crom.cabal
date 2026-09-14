@@ -20,7 +20,6 @@ executable cookbook-of-crom
         Crom.FoodDB.Ingredients
         Crom.Nutrients
         Crom.Units
-        Crom.Util.Functional
         Crom.Util.Text
         Ibis.Compile
         Ibis.Compile.Nutrients
