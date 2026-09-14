@@ -37,7 +37,7 @@ instance J.FromJSON JSNutrient
 
 instance J.FromJSON JSNutrientInner
 
--- | Re-shaped but otherwise unprocessed food data.
+-- | Re-shaped and stripped of whitespace, but otherwise unprocessed food data.
 data RawFood = RawFood
     { name :: T.Text,
       nutrients :: [RawNutrient]
@@ -57,6 +57,9 @@ instance J.FromJSON RawFood where
     parseJSON = fmap toRawFood . J.parseJSON
       where
         toRawFood :: JSFood -> RawFood
-        toRawFood x = RawFood x.description (toRawNutrient <$> x.foodNutrients)
+        toRawFood x = RawFood (T.strip x.description) (toRawNutrient <$> x.foodNutrients)
         toRawNutrient :: JSNutrient -> RawNutrient
-        toRawNutrient x = RawNutrient x.nutrient.name (RawQuantity x.nutrient.unitName x.amount)
+        toRawNutrient x =
+            RawNutrient
+                (T.strip x.nutrient.name)
+                (RawQuantity (T.strip x.nutrient.unitName) x.amount)
