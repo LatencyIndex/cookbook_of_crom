@@ -1,8 +1,8 @@
 module Ibis.Compile.PolyQuantity (
     PolyQuantity,
     fromRawQuantity,
-    toMass,
-    toEnergy,
+    toMassFraction,
+    toEnergyDensity,
     toIU,
 ) where
 
@@ -13,31 +13,33 @@ import qualified Ibis.Read as R
 
 -- | Quantities as present in the JSON food databases
 data PolyQuantity
-    = Mass U.Mass
-    | Energy U.Energy
+    = MassFraction U.MassFraction
+    | EnergyDensity U.EnergyDensity
     | SpecificGravity Float
     | InternationalUnit Float
     | Unknown T.Text Float
 
+-- | Parse quantities from the JSON food database.
+-- They are given in absolute units (e.g. g, mg, kJ), but signify that amount per 100g.
 fromRawQuantity :: R.RawQuantity -> PolyQuantity
 fromRawQuantity (R.RawQuantity unit x) = case unit of
     "IU" -> InternationalUnit x
-    "g" -> Mass $ x *. U.g
-    "kJ" -> Energy $ x *. U.kJ
-    "kcal" -> Energy $ x *. U.kcal
-    "mg" -> Mass $ x *. U.mg
-    "mg_ATE" -> Mass $ x *. U.mg -- Milligrams of Alpha-Tocopherol Equivalents (Vitamin E)
+    "g" -> MassFraction $ x *. U.g_per_100g
+    "kJ" -> EnergyDensity $ x *. U.kJ_per_100g
+    "kcal" -> EnergyDensity $ x *. U.kcal_per_100g
+    "mg" -> MassFraction $ x *. U.mg_per_100g
+    "mg_ATE" -> MassFraction $ x *. U.mg_per_100g -- Milligrams of Alpha-Tocopherol Equivalents (Vitamin E)
     "sp gr" -> SpecificGravity x -- Density relative to water: https://en.wikipedia.org/wiki/Relative_density
-    "µg" -> Mass $ x *. U.ug
+    "µg" -> MassFraction $ x *. U.ug_per_100g
     _ -> Unknown unit x
 
-toMass :: PolyQuantity -> Maybe U.Mass
-toMass (Mass x) = Just x
-toMass _ = Nothing
+toMassFraction :: PolyQuantity -> Maybe U.MassFraction
+toMassFraction (MassFraction x) = Just x
+toMassFraction _ = Nothing
 
-toEnergy :: PolyQuantity -> Maybe U.Energy
-toEnergy (Energy x) = Just x
-toEnergy _ = Nothing
+toEnergyDensity :: PolyQuantity -> Maybe U.EnergyDensity
+toEnergyDensity (EnergyDensity x) = Just x
+toEnergyDensity _ = Nothing
 
 toIU :: PolyQuantity -> Maybe Float
 toIU (InternationalUnit x) = Just x
