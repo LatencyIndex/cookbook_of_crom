@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE TypeApplications #-}
 
 -- | Module for reading JSON food databases.
 module Ibis.Read (

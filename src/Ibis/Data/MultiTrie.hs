@@ -36,7 +36,7 @@ instance forall k n. (Show k, Show n) => Show (Forest k n) where
         indent :: Int -> String
         indent depth = replicate (depth * 4) ' '
         showkv :: Int -> (k, MultiTrie k n) -> [String]
-        showkv depth (k, (MultiTrie n forest)) = root : subforest
+        showkv depth (k, MultiTrie n forest) = root : subforest
           where
             root = indent depth ++ show k ++ " x " ++ show n :: String
             subforest = pshow (depth + 1) forest :: [String]
