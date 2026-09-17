@@ -24,6 +24,7 @@ executable cookbook-of-crom
         Ibis.Compile
         Ibis.Compile.Nutrients
         Ibis.Compile.PolyQuantity
+        Ibis.Data.Foldable
         Ibis.Data.JSON
         Ibis.Data.JSON.JTrie
         Ibis.Data.MultiTrie
