@@ -11,3 +11,18 @@ Shall use usda_parser to generate Haskell source modules with nutrient content f
 - [ ] Create meal plan for N days
 - [ ] Filter recipes by available ingredients
 - [ ] Filter recipes by diet - omnivore, vegetarian, vegan, allergies, gluten, etc.
+
+## Data sources
+
+### Nutrient data
+
+USDA: https://fdc.nal.usda.gov/download-datasets.html
+Gnutrition (also sources from USDA, used for double-checking): https://www.gnu.org/software/gnutrition/
+
+Secondary unused sources:
+- https://tools.myfooddata.com/
+- https://foodb.ca/
+
+### Seasonal availability
+
+https://in-season.gocemitevski.com/ (unknown reliability)
