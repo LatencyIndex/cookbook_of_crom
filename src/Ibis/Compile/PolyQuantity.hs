@@ -23,7 +23,7 @@ data PolyQuantity
 -- They are given in absolute units (e.g. g, mg, kJ), but signify that amount per 100g.
 fromRawQuantity :: R.RawQuantity -> PolyQuantity
 fromRawQuantity (R.RawQuantity unit x) = case unit of
-    "IU" -> InternationalUnit x
+    "IU" -> InternationalUnit x -- Also per 100g.
     "g" -> MassFraction $ x *. U.g_per_100g
     "kJ" -> EnergyDensity $ x *. U.kJ_per_100g
     "kcal" -> EnergyDensity $ x *. U.kcal_per_100g
