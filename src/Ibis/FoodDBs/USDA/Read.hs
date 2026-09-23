@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 -- | Module for reading JSON food databases.
-module Ibis.Read (
+module Ibis.FoodDBs.USDA.Read (
     RawFood (..),
     RawNutrient (..),
     RawQuantity (..),

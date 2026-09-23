@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Ibis.Compile.Nutrients (
+module Ibis.FoodDBs.USDA.Compile.Nutrients (
     toJSNutrientMap,
     deriveCalories,
     deriveNutrients,
@@ -17,8 +17,8 @@ import qualified Data.Map as M
 import Data.Monoid (Sum (..))
 import Data.Ratio ((%))
 import qualified Data.Text as T
-import qualified Ibis.Compile.PolyQuantity as P
-import qualified Ibis.Read as R
+import qualified Ibis.FoodDBs.USDA.Compile.PolyQuantity as P
+import qualified Ibis.FoodDBs.USDA.Read as R
 
 -- | Map from nutrient name to quantity, as present in the JSON food database.
 -- One nutrient may have multiple quantities listed.

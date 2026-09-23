@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeApplications #-}
 
-module Ibis.Research.JSON (
+module Ibis.FoodDBs.USDA.Research.JSON (
     prettyPrintArray,
     printProbabilityTrie,
     allNutrientNames,
@@ -21,7 +21,7 @@ import qualified Data.Text as T
 import Ibis.Data.JSON (trimArray)
 import qualified Ibis.Data.JSON.JTrie as JT
 import qualified Ibis.Data.MultiTrie as MT
-import qualified Ibis.Read as R
+import qualified Ibis.FoodDBs.USDA.Read as R
 
 -- | Pretty-print the first n JSON values from a JSON array.
 -- Uses Conduit to parse the values one at a time,

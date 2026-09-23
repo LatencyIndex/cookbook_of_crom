@@ -1,4 +1,4 @@
-module Ibis.Compile.PolyQuantity (
+module Ibis.FoodDBs.USDA.Compile.PolyQuantity (
     PolyQuantity,
     fromRawQuantity,
     toMassFraction,
@@ -9,7 +9,7 @@ module Ibis.Compile.PolyQuantity (
 import Crom.Units ((*.))
 import qualified Crom.Units as U
 import qualified Data.Text as T
-import qualified Ibis.Read as R
+import qualified Ibis.FoodDBs.USDA.Read as R
 
 -- | Quantities as present in the JSON food databases
 data PolyQuantity
