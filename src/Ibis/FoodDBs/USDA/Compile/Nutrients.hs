@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Ibis.FoodDBs.USDA.Compile.Nutrients (
+    JSNutrientMap,
     toJSNutrientMap,
     deriveCalories,
     deriveNutrients,
