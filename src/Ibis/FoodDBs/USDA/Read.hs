@@ -34,7 +34,7 @@ instance J.FromJSON JSFood
 instance J.FromJSON JSNutrient
 instance J.FromJSON JSNutrientInner
 
--- | Re-shaped and stripped of whitespace, but otherwise unprocessed food data.
+-- | Re-shaped and stripped of whitespace, but otherwise unprocessed USDA JSON food data.
 data RawFood = RawFood
     { name :: T.Text,
       nutrients :: [RawNutrient]
