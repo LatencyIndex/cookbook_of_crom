@@ -55,8 +55,11 @@ data RankedSum a = RankedSum
 rankOne :: a -> RankedSum a
 rankOne = RankedSum 1 1
 
+-- If there is no data, instead of 0/0, 0/1 is used, to avoid division by zero.
+-- This still results in correct ranking, since all RankedSums with 0 present values
+-- are equivalent.
 rank :: RankedSum a -> Rational
-rank x = fromIntegral x.present % fromIntegral x.total
+rank x = fromIntegral x.present % fromIntegral (max 1 x.total)
 
 toValid :: RankedSum a -> Maybe a
 toValid x
