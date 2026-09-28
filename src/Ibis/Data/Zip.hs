@@ -3,9 +3,9 @@ module Ibis.Data.Zip (
     zipContents,
 ) where
 
-import qualified Codec.Archive.Zip as Z
-import qualified Data.ByteString as B
-import qualified Data.ByteString.Lazy.Char8 as BL
+import Codec.Archive.Zip qualified as Z
+import Data.ByteString qualified as B
+import Data.ByteString.Lazy.Char8 qualified as BL
 
 -- | Interpret the input as the contents of a zip archive, and unzip every file inside.
 unzipAll :: B.ByteString -> [B.ByteString]
