@@ -1,10 +1,10 @@
 module Crom.Calendar (
-    Month(..),
+    Month (..),
     Date,
-    perennial
+    perennial,
 ) where
 
-import qualified Data.Set as S
+import Data.Set qualified as S
 
 data Month
     = Jan
@@ -22,7 +22,7 @@ data Month
     deriving (Show, Eq, Ord, Enum, Bounded)
 
 data Date = Date {year :: Int, month :: Month, day :: Int}
-    deriving Show
+    deriving (Show)
 
 perennial :: S.Set Month
 perennial = S.fromList [minBound .. maxBound]
