@@ -5,15 +5,15 @@ module Ibis.Data.JSON.JTrie (
 ) where
 
 import Conduit
-import qualified Data.Aeson.KeyMap as KM
-import qualified Data.Aeson.Types as T
+import Data.Aeson.KeyMap qualified as KM
+import Data.Aeson.Types qualified as T
 import Data.Bifunctor (bimap)
-import qualified Data.ByteString as B
+import Data.ByteString qualified as B
 import Data.Conduit.Aeson
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
-import qualified Ibis.Data.MultiTrie as M
 import Ibis.Data.JSON (trimArray)
+import Ibis.Data.MultiTrie qualified as M
 
 -- | Represents the type of a JSON value, ignoring its value.
 -- Useful for exploring JSON structure.
