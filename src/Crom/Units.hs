@@ -15,11 +15,11 @@ module Crom.Units (
     kcal_per_kg, kcal_per_100g, kJ_per_100g,
 ) where
 
+import qualified Crom.Util.Text as T
 import Data.Function (on)
-import Crom.Util.Text (showSigDigits)
 
 -- A quantity of dimension a, its value stored in some canonical unit.
-newtype Qty a = Qty {val :: Float}
+newtype Qty a = Qty {val :: Float} deriving (Show)
 
 -- Dimensions
 data DMass
@@ -115,15 +115,21 @@ kJ_per_100g = kJ ./. (100 *. g)
 -- Shows the quantity and unit, to 3 significant digits.
 -- 'units' must be non-empty.
 qShow :: [(Qty a, String)] -> Qty a -> String
-qShow units q = showSigDigits 3 (q ./. uval) ++ " " ++ uname where
+qShow units q = T.showSigDigits 3 (q ./. uval) ++ " " ++ uname
+  where
     smallest = minimum units
     smaller = filter ((<= q) . fst) units
     -- Largest unit no larger than q, or the smallest unit if q is smaller than all others:
     largest = maximum (smallest : smaller)
     (uval, uname) = largest
 
-instance Show Mass          where show   = qShow [(ug, "µg"), (mg, "mg"), (g, "g"), (kg, "kg")]
-instance Show Energy        where show   = qShow [(kcal, "kcal")]
-instance Show Time          where show   = qShow [(day, "days")]
-instance Show MassFraction  where show x = show (x .* 100 .*. g) ++ " / 100 g"
-instance Show EnergyDensity where show x = show (x .* 100 .*. g) ++ " / 100 g"
+instance T.PrettyShow Mass where
+    prettyShow = qShow [(ug, "µg"), (mg, "mg"), (g, "g"), (kg, "kg")]
+instance T.PrettyShow Energy where
+    prettyShow = qShow [(kcal, "kcal")]
+instance T.PrettyShow Time where
+    prettyShow = qShow [(day, "days")]
+instance T.PrettyShow MassFraction where
+    prettyShow x = T.prettyShow (x .* 100 .*. g) ++ " / 100 g"
+instance T.PrettyShow EnergyDensity where
+    prettyShow x = T.prettyShow (x .* 100 .*. g) ++ " / 100 g"
