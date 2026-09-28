@@ -2,8 +2,8 @@ module Ibis.Data.JSON (
     trimArray,
 ) where
 
-import qualified Data.ByteString as B
-import qualified Data.ByteString.Char8 as C
+import Data.ByteString qualified as B
+import Data.ByteString.Char8 qualified as C
 
 -- | Drop everything outside the outer-most [],
 -- so that only a JSON array remains as the top-most value.
