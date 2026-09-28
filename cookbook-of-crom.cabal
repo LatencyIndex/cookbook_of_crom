@@ -29,7 +29,6 @@ executable cookbook-of-crom
         Ibis.FoodDBs.USDA.Compile.Nutrients
         Ibis.FoodDBs.USDA.Compile.PolyQuantity
         Ibis.FoodDBs.USDA.Read
-        Ibis.FoodDBs.USDA.Research
         Ibis.FoodDBs.USDA.Research.JSON
         Ibis.Scribe
     default-extensions:

@@ -1,5 +1,7 @@
 {-# LANGUAGE TypeApplications #-}
 
+-- | Utilities to help investigate JSON food data sources.
+-- E.g. print the shape of JSON data, or pretty-print example JSON entries.
 module Ibis.FoodDBs.USDA.Research.JSON (
     prettyPrintArray,
     printProbabilityTrie,
