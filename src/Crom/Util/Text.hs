@@ -2,9 +2,14 @@ module Crom.Util.Text (
     padLeft,
     padRight,
     showSigDigits,
+    PrettyShow (..),
 ) where
 
 import Numeric (floatToDigits)
+
+-- | Minimal pretty-printing class.
+class PrettyShow a where
+    prettyShow :: a -> String
 
 padLeft :: a -> Int -> [a] -> [a]
 padLeft x n xs = replicate deficit x ++ xs
