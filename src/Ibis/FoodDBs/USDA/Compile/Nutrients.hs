@@ -8,18 +8,18 @@ module Ibis.FoodDBs.USDA.Compile.Nutrients (
 ) where
 
 import Control.Arrow ((>>>))
-import qualified Crom.Nutrients as N
+import Crom.Nutrients qualified as N
 import Crom.Units ((*.), (.*.))
-import qualified Crom.Units as U
+import Crom.Units qualified as U
 import Data.Function (on, (&))
-import qualified Data.List as L
+import Data.List qualified as L
 import Data.List.Extra (firstJust)
-import qualified Data.Map as M
+import Data.Map qualified as M
 import Data.Monoid (Sum (..))
 import Data.Ratio ((%))
-import qualified Data.Text as T
-import qualified Ibis.FoodDBs.USDA.Compile.PolyQuantity as P
-import qualified Ibis.FoodDBs.USDA.Read as R
+import Data.Text qualified as T
+import Ibis.FoodDBs.USDA.Compile.PolyQuantity qualified as P
+import Ibis.FoodDBs.USDA.Read qualified as R
 
 -- | Map from nutrient name to quantity, as present in the JSON food database.
 -- One nutrient may have multiple quantities listed.
