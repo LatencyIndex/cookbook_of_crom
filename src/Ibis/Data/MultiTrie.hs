@@ -8,14 +8,14 @@ module Ibis.Data.MultiTrie (
     toProbabilities,
 ) where
 
-import qualified Data.Map.Strict as M
+import Data.Map.Strict qualified as M
 
 -- | If stored under a key in a Forest, count is the number of times that key was inserted.
 data MultiTrie k n = MultiTrie {count :: n, subForest :: Forest k n}
 
 newtype Forest k n = Forest {unwrap :: M.Map k (MultiTrie k n)}
 
-instance forall k n. (Ord k, Num n) => Semigroup (Forest k n) where
+instance forall k n. (Num n, Ord k) => Semigroup (Forest k n) where
     (Forest l) <> (Forest r) = Forest $ M.unionWith f l r
       where
         f :: MultiTrie k n -> MultiTrie k n -> MultiTrie k n
@@ -25,7 +25,7 @@ instance forall k n. (Ord k, Num n) => Semigroup (Forest k n) where
             n = x.count + y.count
             forest = x.subForest <> y.subForest
 
-instance (Ord k, Num n) => Monoid (Forest k n) where
+instance (Num n, Ord k) => Monoid (Forest k n) where
     mempty = Forest M.empty
 
 instance forall k n. (Show k, Show n) => Show (Forest k n) where
@@ -41,13 +41,13 @@ instance forall k n. (Show k, Show n) => Show (Forest k n) where
             root = indent depth ++ show k ++ " x " ++ show n :: String
             subforest = pshow (depth + 1) forest :: [String]
 
-singleton :: (Ord k, Num n) => k -> Forest k n -> Forest k n
+singleton :: (Num n, Ord k) => k -> Forest k n -> Forest k n
 singleton k forest = Forest $ M.singleton k (MultiTrie 1 forest)
 
-leaf :: (Ord k, Num n) => k -> Forest k n
+leaf :: (Num n, Ord k) => k -> Forest k n
 leaf k = singleton k mempty
 
-fromList :: (Ord k, Num n) => [k] -> Forest k n
+fromList :: (Num n, Ord k) => [k] -> Forest k n
 fromList = mconcat . fmap leaf
 
 -- | Convert counts to the ratio of count / parentCount,
