@@ -7,9 +7,9 @@ module Ibis.FoodDBs.USDA.Compile.PolyQuantity (
 ) where
 
 import Crom.Units ((*.))
-import qualified Crom.Units as U
-import qualified Data.Text as T
-import qualified Ibis.FoodDBs.USDA.Read as R
+import Crom.Units qualified as U
+import Data.Text qualified as T
+import Ibis.FoodDBs.USDA.Read qualified as R
 
 -- | Quantities as present in the JSON food databases
 data PolyQuantity
