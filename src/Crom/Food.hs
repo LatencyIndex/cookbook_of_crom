@@ -9,7 +9,7 @@ import Crom.Calendar
 import Crom.Nutrients (Nutrient)
 import Crom.Units
 import Data.Function (on)
-import Data.Map qualified as M
+import Data.Map.Strict qualified as M
 import Data.Maybe (fromMaybe)
 import Data.Set qualified as S
 import Data.Text qualified as T

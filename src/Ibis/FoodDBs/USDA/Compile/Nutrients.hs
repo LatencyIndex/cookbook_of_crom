@@ -14,7 +14,7 @@ import Crom.Units qualified as U
 import Data.Function (on, (&))
 import Data.List qualified as L
 import Data.List.Extra (firstJust)
-import Data.Map qualified as M
+import Data.Map.Strict qualified as M
 import Data.Monoid (Sum (..))
 import Data.Ratio ((%))
 import Data.Text qualified as T
