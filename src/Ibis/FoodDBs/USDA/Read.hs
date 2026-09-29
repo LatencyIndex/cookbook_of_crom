@@ -17,6 +17,8 @@ import GHC.Generics
 -- | Food data as represented in the JSON databases.
 data JSFood = JSFood
     { description :: T.Text,
+      brandName :: Maybe T.Text,
+      subbrandName :: Maybe T.Text,
       foodNutrients :: [JSNutrient]
     }
     deriving (Show, Generic)
@@ -77,8 +79,14 @@ listRawFoodErrs food = mapMaybe getNutrientErr food.nutrients
 instance J.FromJSON RawFood where
     parseJSON = fmap toRawFood . J.parseJSON
       where
+        preDash :: T.Text -> T.Text
+        preDash x = " -- " <> T.strip x
+        mayPreDash :: Maybe T.Text -> T.Text
+        mayPreDash = maybe "" preDash
+        toName :: JSFood -> T.Text
+        toName x = T.strip x.description <> mayPreDash x.subbrandName <> mayPreDash x.brandName
         toRawFood :: JSFood -> RawFood
-        toRawFood x = RawFood (T.strip x.description) (toRawNutrient <$> x.foodNutrients)
+        toRawFood x = RawFood (toName x) (toRawNutrient <$> x.foodNutrients)
         toRawNutrient :: JSNutrient -> RawNutrient
         toRawNutrient x =
             RawNutrient
