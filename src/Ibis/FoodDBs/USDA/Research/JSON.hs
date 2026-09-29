@@ -11,19 +11,19 @@ module Ibis.FoodDBs.USDA.Research.JSON (
 
 import Conduit (foldC, mapC, mapM_C, runConduit, runConduitPure, takeC, yield, (.|))
 import Data.Aeson (Value)
-import qualified Data.Aeson.Encode.Pretty as P
-import qualified Data.Aeson.Types as J
-import qualified Data.ByteString as B
-import qualified Data.ByteString.Lazy as BL
+import Data.Aeson.Encode.Pretty qualified as P
+import Data.Aeson.Types qualified as J
+import Data.ByteString qualified as B
+import Data.ByteString.Lazy qualified as BL
 import Data.Conduit.Aeson (conduitArrayEither)
 import Data.Conduit.List (catMaybes)
 import Data.Either.Extra (eitherToMaybe)
-import qualified Data.Set as S
-import qualified Data.Text as T
+import Data.Set qualified as S
+import Data.Text qualified as T
 import Ibis.Data.JSON (trimArray)
-import qualified Ibis.Data.JSON.JTrie as JT
-import qualified Ibis.Data.MultiTrie as MT
-import qualified Ibis.FoodDBs.USDA.Read as R
+import Ibis.Data.JSON.JTrie qualified as JT
+import Ibis.Data.MultiTrie qualified as MT
+import Ibis.FoodDBs.USDA.Read qualified as R
 
 -- | Pretty-print the first n JSON values from a JSON array.
 -- Uses Conduit to parse the values one at a time,
