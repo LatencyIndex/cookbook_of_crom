@@ -5,15 +5,16 @@ module Ibis.Scribe (
 
 import Conduit (ConduitT, awaitForever, runConduitPure, sinkList, yield, (.|))
 import Crom.Food qualified as F
+import Crom.IO.Zip.Read qualified as ZR
 import Data.ByteString qualified as B
 import Data.Conduit.Aeson qualified as CA
 import Data.Either (partitionEithers)
 import Data.Text qualified as T
 import Data.Text.IO qualified as TIO
 import Ibis.Data.JSON (trimArray)
-import Ibis.Data.Zip qualified as Z
 import Ibis.FoodDBs.USDA.Compile qualified as C
 import Ibis.FoodDBs.USDA.Read qualified as R
+import Ibis.IO.Zip.Write qualified as ZW
 
 -- | Force evaluate each element inside Conduit's control flow.
 forceC :: (Monad m) => ConduitT a a m ()
@@ -33,7 +34,7 @@ parseUSDA json =
 -- | Create a nutrient database from the given USDA JSON food sources.
 scribeUSDA :: [FilePath] -> FilePath -> IO ()
 scribeUSDA srcs dst = do
-    files <- concatMap Z.unzipAll <$> mapM B.readFile srcs
+    files <- concatMap ZR.unzipAll <$> mapM B.readFile srcs
     let results = concatMap parseUSDA files :: [Either CA.ParserError R.RawFood]
         (parseErrs, rawFoods) = partitionEithers results :: ([CA.ParserError], [R.RawFood])
         foods = C.toFood <$> rawFoods :: [F.Food]
@@ -42,4 +43,4 @@ scribeUSDA srcs dst = do
     mapM_ print parseErrs
     putStrLn "Partial errors:"
     mapM_ TIO.putStrLn partialErrs
-    B.writeFile dst (Z.zipContents "usdaHaskell.txt" (show foods))
+    B.writeFile dst (ZW.zipContents "usdaHaskell.txt" (show foods))

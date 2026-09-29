@@ -17,18 +17,19 @@ executable cookbook-of-crom
         Crom.Calendar
         Crom.Diet
         Crom.Food
+        Crom.IO.Zip.Read
         Crom.Nutrients
         Crom.Units
         Crom.Util.Text
         Ibis.Data.JSON
         Ibis.Data.JSON.JTrie
         Ibis.Data.MultiTrie
-        Ibis.Data.Zip
         Ibis.FoodDBs.USDA.Compile
         Ibis.FoodDBs.USDA.Compile.Nutrients
         Ibis.FoodDBs.USDA.Compile.PolyQuantity
         Ibis.FoodDBs.USDA.Read
         Ibis.FoodDBs.USDA.Research.JSON
+        Ibis.IO.Zip.Write
         Ibis.Scribe
     default-extensions:
         DuplicateRecordFields
