@@ -4,16 +4,16 @@ module Ibis.Scribe (
 ) where
 
 import Conduit (ConduitT, awaitForever, runConduitPure, sinkList, yield, (.|))
-import qualified Crom.Food as F
-import qualified Data.ByteString as B
-import qualified Data.Conduit.Aeson as CA
+import Crom.Food qualified as F
+import Data.ByteString qualified as B
+import Data.Conduit.Aeson qualified as CA
 import Data.Either (partitionEithers)
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import Data.Text qualified as T
+import Data.Text.IO qualified as TIO
 import Ibis.Data.JSON (trimArray)
-import qualified Ibis.Data.Zip as Z
-import qualified Ibis.FoodDBs.USDA.Compile as C
-import qualified Ibis.FoodDBs.USDA.Read as R
+import Ibis.Data.Zip qualified as Z
+import Ibis.FoodDBs.USDA.Compile qualified as C
+import Ibis.FoodDBs.USDA.Read qualified as R
 
 -- | Force evaluate each element inside Conduit's control flow.
 forceC :: (Monad m) => ConduitT a a m ()
