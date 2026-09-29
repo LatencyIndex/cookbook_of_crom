@@ -23,6 +23,7 @@ executable cookbook-of-crom
         Crom.Util.Text
         Ibis.Data.JSON
         Ibis.Data.JSON.JTrie
+        Ibis.Data.MultiMap
         Ibis.Data.MultiTrie
         Ibis.FoodDBs.USDA.Compile
         Ibis.FoodDBs.USDA.Compile.Nutrients
