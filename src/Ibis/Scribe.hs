@@ -40,14 +40,14 @@ scribeUSDA srcs dst = do
     files <- concatMap ZR.unzipAll <$> mapM B.readFile srcs
     let results = concatMap parseUSDA files :: [Either CA.ParserError R.RawFood]
         (parseErrs, rawFoods) = partitionEithers results :: ([CA.ParserError], [R.RawFood])
-        foods = C.toFood <$> rawFoods :: [F.Food]
+        foods = C.toFood <$> rawFoods :: [(F.FoodID, F.FoodData)]
         partialErrs = rawFoods >>= R.listRawFoodErrs :: [T.Text]
     putStrLn "Parsing errors:"
     mapM_ print parseErrs
     putStrLn "Partial errors:"
     mapM_ TIO.putStrLn partialErrs
     putStrLn "Duplicates:"
-    let foodMap = MM.fromList $ (\food -> (food.name, food)) <$> foods
+    let foodMap = MM.fromList foods
         dups = M.toList $ M.filter ((> 1) . N.length) foodMap
-    mapM_ (\(name, dfoods) -> TIO.putStrLn (name <> ": " <> T.show (N.length dfoods))) dups
+    mapM_ (\(name, dfoods) -> TIO.putStrLn (T.show name <> ": " <> T.show (N.length dfoods))) dups
     B.writeFile dst (ZW.zipContents "usdaHaskell.txt" (show foods))

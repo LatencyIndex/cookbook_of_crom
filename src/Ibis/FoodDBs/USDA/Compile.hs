@@ -8,11 +8,18 @@ import Crom.Food qualified as F
 import Ibis.FoodDBs.USDA.Compile.Nutrients qualified as N
 import Ibis.FoodDBs.USDA.Read qualified as R
 
-toFood :: R.RawFood -> F.Food
-toFood rawFood =
-    F.Food
+toFoodID :: R.RawFood -> F.FoodID
+toFoodID rawFood =
+    F.FoodID
         { name = rawFood.name,
-          edible = True,
+          brand = rawFood.brand,
+          subbrand = rawFood.subbrand
+        }
+
+toFoodData :: R.RawFood -> F.FoodData
+toFoodData rawFood =
+    F.FoodData
+        { edible = True,
           ingredients = mempty,
           recipe = mempty,
           season = C.perennial,
@@ -22,3 +29,6 @@ toFood rawFood =
   where
     nutrientMap :: N.JSNutrientMap
     nutrientMap = N.toJSNutrientMap rawFood.nutrients
+
+toFood :: R.RawFood -> (F.FoodID, F.FoodData)
+toFood x = (toFoodID x, toFoodData x)

@@ -45,6 +45,10 @@ instance J.FromJSON JSNutrientInner
 -- | Re-shaped and stripped of whitespace, but otherwise unprocessed USDA JSON food data.
 data RawFood = RawFood
     { name :: T.Text,
+      -- Empty string if field is absent.
+      brand :: T.Text,
+      -- Empty string if field is absent.
+      subbrand :: T.Text,
       nutrients :: [RawNutrient]
     }
     deriving (Show)
@@ -79,16 +83,16 @@ listRawFoodErrs food = mapMaybe getNutrientErr food.nutrients
 instance J.FromJSON RawFood where
     parseJSON = fmap toRawFood . J.parseJSON
       where
-        preDash :: T.Text -> T.Text
-        preDash x = " -- " <> T.strip x
-        mayPreDash :: Maybe T.Text -> T.Text
-        mayPreDash = maybe "" preDash
-        toName :: JSFood -> T.Text
-        toName x = T.strip x.description <> mayPreDash x.subbrandName <> mayPreDash x.brandName
-        toRawFood :: JSFood -> RawFood
-        toRawFood x = RawFood (toName x) (toRawNutrient <$> x.foodNutrients)
         toRawNutrient :: JSNutrient -> RawNutrient
         toRawNutrient x =
             RawNutrient
                 (T.strip x.nutrient.name)
                 (RawQuantity (T.strip x.nutrient.unitName) (x.amount <|> x.median))
+        toRawFood :: JSFood -> RawFood
+        toRawFood x =
+            RawFood
+                { name = T.strip x.description,
+                  brand = maybe "" T.strip x.brandName,
+                  subbrand = maybe "" T.strip x.subbrandName,
+                  nutrients = toRawNutrient <$> x.foodNutrients
+                }
