@@ -19,7 +19,7 @@ data Month
     | Oct
     | Nov
     | Dec
-    deriving (Show, Eq, Ord, Enum, Bounded)
+    deriving (Show, Read, Eq, Ord, Enum, Bounded)
 
 data Date = Date {year :: Int, month :: Month, day :: Int}
     deriving (Show)

@@ -28,7 +28,7 @@ data Food = Food
       -- Not necessarily the sum of ingredients, as nutrients can be altered by cooking (e.g. heat destroys vitamin C).
       nutrients :: M.Map Nutrient MassFraction
     }
-    deriving (Show)
+    deriving (Show, Read)
 
 instance Eq Food where (==) = (==) `on` (.name)
 instance Ord Food where compare = compare `on` (.name)

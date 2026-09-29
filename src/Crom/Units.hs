@@ -22,7 +22,7 @@ import qualified Data.List.NonEmpty as N
 import qualified Data.List.NonEmpty.Extra as NE
 
 -- A quantity of dimension a, its value stored in some canonical unit.
-newtype Qty a = Qty {val :: Float} deriving (Show)
+newtype Qty a = Qty {val :: Float} deriving (Show, Read)
 
 -- Dimensions
 data DMass
