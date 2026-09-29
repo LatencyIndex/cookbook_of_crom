@@ -9,9 +9,9 @@ module Ibis.FoodDBs.USDA.Read (
 ) where
 
 import Control.Applicative ((<|>))
-import qualified Data.Aeson.Types as J
+import Data.Aeson.Types qualified as J
 import Data.Maybe (mapMaybe)
-import qualified Data.Text as T
+import Data.Text qualified as T
 import GHC.Generics
 
 -- | Food data as represented in the JSON databases.
