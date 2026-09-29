@@ -3,10 +3,10 @@ module Ibis.FoodDBs.USDA.Compile (
     toFood,
 ) where
 
-import qualified Crom.Calendar as C
-import qualified Crom.Food as F
-import qualified Ibis.FoodDBs.USDA.Compile.Nutrients as N
-import qualified Ibis.FoodDBs.USDA.Read as R
+import Crom.Calendar qualified as C
+import Crom.Food qualified as F
+import Ibis.FoodDBs.USDA.Compile.Nutrients qualified as N
+import Ibis.FoodDBs.USDA.Read qualified as R
 
 toFood :: R.RawFood -> F.Food
 toFood rawFood =
