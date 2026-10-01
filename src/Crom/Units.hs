@@ -2,6 +2,7 @@
 
 -- A simple implementation of compile-time physical units.
 module Crom.Units (
+    Qty,
     Mass, Energy, Time,
     MassFraction, EnergyDensity,
     QMul, QDiv,
@@ -16,13 +17,12 @@ module Crom.Units (
 ) where
 
 import qualified Crom.Util.Text as T
-import Data.Function (on)
 import Data.List.NonEmpty (NonEmpty((:|)))
 import qualified Data.List.NonEmpty as N
 import qualified Data.List.NonEmpty.Extra as NE
 
 -- A quantity of dimension a, its value stored in some canonical unit.
-newtype Qty a = Qty {val :: Float} deriving (Show, Read)
+newtype Qty a = Qty {val :: Float} deriving (Show, Read, Eq, Ord)
 
 -- Dimensions
 data DMass
@@ -42,8 +42,6 @@ type EnergyDensity = Qty DEnergyDensity
 (.-.) :: Qty a -> Qty a -> Qty a
 (Qty x) .-. (Qty y) = Qty (x-y)
 
-instance Eq        (Qty a) where (==) = (==) `on` (.val)
-instance Ord       (Qty a) where compare = compare `on` (.val)
 instance Semigroup (Qty a) where (<>) = (.+.)
 instance Monoid    (Qty a) where mempty = Qty 0
 
