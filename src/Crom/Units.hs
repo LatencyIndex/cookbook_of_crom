@@ -2,12 +2,12 @@
 
 -- A simple implementation of compile-time physical units.
 module Crom.Units (
-    Qty,
     Mass, Energy, Time,
     MassFraction, EnergyDensity,
-    QMul, QDiv,
+    QSum, QMul, QDiv,
     (.*.), (./.),
     (.+.), (.-.), (*.), (.*), (./),
+    zeroQty, sumQty, avgQty,
     toMFrac, mFracDiv,
     ug, mg, g, kg, lb,
     kJ, kcal,
@@ -37,16 +37,41 @@ type Time = Qty DTime
 type MassFraction = Qty DMassFraction
 type EnergyDensity = Qty DEnergyDensity
 
-(.+.) :: Qty a -> Qty a -> Qty a
-(Qty x) .+. (Qty y) = Qty (x+y)
-(.-.) :: Qty a -> Qty a -> Qty a
-(Qty x) .-. (Qty y) = Qty (x-y)
-
-instance Semigroup (Qty a) where (<>) = (.+.)
-instance Monoid    (Qty a) where mempty = Qty 0
-
+class QSum a where
+    (.+.) :: a -> a -> a
+    zeroQty :: a
+    sumQty :: (Foldable f) => f a -> a
+    sumQty = foldr (.+.) zeroQty
+    -- | Nothing if foldable is empty.
+    avgQty :: (Foldable f, QSum a, QDiv a Float a) => f a -> Maybe a
+    avgQty xs
+        | n > 0 = Just $ sumQty xs ./. (fromIntegral n :: Float)
+        | otherwise = Nothing
+        where n = length xs
+class QSub a where
+    (.-.) :: a -> a -> a
 class QMul a b c | a b -> c where (.*.) :: a -> b -> c
 class QDiv a b c | a b -> c where (./.) :: a -> b -> c
+
+instance QSum Float where
+    (.+.) = (+)
+    zeroQty = 0
+instance QSum Int where
+    (.+.) = (+)
+    zeroQty = 0
+instance QSum (Qty a) where
+    (Qty x) .+. (Qty y) = Qty (x+y)
+    zeroQty = Qty 0
+
+instance QSub Float where
+    (.-.) = (-)
+instance QSub Int where
+    (.-.) = (-)
+instance QSub (Qty a) where
+    (Qty x) .-. (Qty y) = Qty (x-y)
+
+instance Semigroup (Qty a) where (<>) = (.+.)
+instance Monoid    (Qty a) where mempty = zeroQty
 
 -- Internal functions for more convenient implementation
 qmul :: Qty a -> Qty b -> Qty c
@@ -55,6 +80,7 @@ qdiv :: Qty a -> Qty b -> Qty c
 qdiv (Qty x) (Qty y) = Qty (x/y)
 
 -- Anything more generic or clever runs into problems with conflicting instances.
+instance QMul Float         Float         Float         where (.*.) = (*)
 instance QMul Float         (Qty a)       (Qty a)       where x .*. (Qty y) = Qty (x*y)
 instance QMul (Qty a)       Float         (Qty a)       where (Qty x) .*. y = Qty (x*y)
 instance QMul MassFraction  Mass          Mass          where (.*.) = qmul
@@ -65,6 +91,7 @@ instance QMul Mass          EnergyDensity Energy        where (.*.) = qmul
 instance QMul MassFraction  EnergyDensity EnergyDensity where (.*.) = qmul
 instance QMul EnergyDensity MassFraction  EnergyDensity where (.*.) = qmul
 
+instance QDiv Float         Float         Float         where (./.) = (/)
 instance QDiv (Qty a)       Float         (Qty a)       where (Qty x) ./. y = Qty (x/y)
 instance QDiv (Qty a)       (Qty a)       Float         where (Qty x) ./. (Qty y) = x/y
 instance QDiv Energy        Mass          EnergyDensity where (./.) = qdiv

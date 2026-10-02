@@ -46,7 +46,7 @@ printProbabilityTrie :: Maybe Int -> B.ByteString -> IO ()
 printProbabilityTrie n json = print $ MT.toProbabilities $ JT.fromJSONArray n json
 
 -- | Parse JSON into RawFood, extract data, and monoidally combine it.
-gatherRawField :: (Monoid m) => (R.RawFood -> m) -> B.ByteString -> m
+gatherRawField :: (Monoid m) => (R.JSFood -> m) -> B.ByteString -> m
 gatherRawField f json =
     runConduitPure $
         yield (trimArray json)
@@ -56,7 +56,7 @@ gatherRawField f json =
             .| mapC eitherToMaybe
             .| catMaybes
             -- Parse JSON to RawFood
-            .| mapC (J.parseMaybe (J.parseJSON @R.RawFood))
+            .| mapC (J.parseMaybe (J.parseJSON @R.JSFood))
             -- Skip failed parses
             .| catMaybes
             -- Extract the monoid value
@@ -66,8 +66,8 @@ gatherRawField f json =
 
 -- | All distinct nutrient names from the JSON dataset.
 allNutrientNames :: B.ByteString -> S.Set T.Text
-allNutrientNames = gatherRawField (S.fromList . fmap (.name) . (.nutrients))
+allNutrientNames = gatherRawField (S.fromList . fmap (.nutrient.name) . (.foodNutrients))
 
 -- | All distinct unit names from the JSON dataset.
 allUnitNames :: B.ByteString -> S.Set T.Text
-allUnitNames = gatherRawField (S.fromList . fmap (.quantity.unit) . (.nutrients))
+allUnitNames = gatherRawField (S.fromList . fmap (.nutrient.unitName) . (.foodNutrients))

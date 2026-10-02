@@ -45,10 +45,10 @@ derive_season = foldr (S.intersection . (.season)) perennial
 
 -- Calory density of combined ingredients.
 derive_calories :: [(FoodData, MassFraction)] -> EnergyDensity
-derive_calories = mconcat . fmap (\(food, frac) -> get_calories food .*. frac)
+derive_calories = sumQty . fmap (\(food, frac) -> get_calories food .*. frac)
   where
     get_calories :: FoodData -> EnergyDensity
-    get_calories = fromMaybe mempty . (.calories)
+    get_calories = fromMaybe zeroQty . (.calories)
 
 -- Nutrient fractions of combined ingredients.
 derive_nutrients :: [(FoodData, MassFraction)] -> M.Map Nutrient MassFraction

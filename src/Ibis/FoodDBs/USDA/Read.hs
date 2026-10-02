@@ -2,17 +2,23 @@
 
 -- | Module for reading JSON food databases.
 module Ibis.FoodDBs.USDA.Read (
+    JSFood (..),
+    JSNutrient (..),
+    JSNutrientInner (..),
     RawFood (..),
-    RawNutrient (..),
-    RawQuantity (..),
+    RawFoodID (..),
+    RawFoodData (..),
     listRawFoodErrs,
 ) where
 
 import Control.Applicative ((<|>))
+import Crom.Units ((*.))
+import Crom.Units qualified as U
 import Data.Aeson.Types qualified as J
-import Data.Maybe (mapMaybe)
 import Data.Text qualified as T
 import GHC.Generics
+import Ibis.Data.MultiMap qualified as MM
+import Ibis.FoodDBs.USDA.Compile.PolyQuantity qualified as P
 
 -- | Food data as represented in the JSON databases.
 data JSFood = JSFood
@@ -42,57 +48,91 @@ instance J.FromJSON JSFood
 instance J.FromJSON JSNutrient
 instance J.FromJSON JSNutrientInner
 
--- | Re-shaped and stripped of whitespace, but otherwise unprocessed USDA JSON food data.
 data RawFood = RawFood
-    { name :: T.Text,
-      -- Empty string if field is absent.
-      brand :: T.Text,
-      -- Empty string if field is absent.
-      subbrand :: T.Text,
-      nutrients :: [RawNutrient]
+    { foodID :: RawFoodID,
+      foodData :: RawFoodData
     }
-    deriving (Show)
-
-data RawNutrient = RawNutrient
-    { name :: T.Text,
-      quantity :: RawQuantity
-    }
-    deriving (Show)
-
-data RawQuantity = RawQuantity
-    { unit :: T.Text,
-      amount :: Maybe Float
-    }
-    deriving (Show)
-
--- | Report if any nutrient is missing both 'amount' and 'median' fields.
-listRawFoodErrs :: RawFood -> [T.Text]
-listRawFoodErrs food = mapMaybe getNutrientErr food.nutrients
-  where
-    getNutrientErr :: RawNutrient -> Maybe T.Text
-    getNutrientErr nutrient = case nutrient.quantity.amount of
-        Nothing ->
-            Just $
-                "Food "
-                    <> food.name
-                    <> "\n    nutrient "
-                    <> nutrient.name
-                    <> "\n    quantity error: missing both 'amount' and 'median' fields."
-        Just _ -> Nothing
 
 instance J.FromJSON RawFood where
-    parseJSON = fmap toRawFood . J.parseJSON
+    parseJSON x = do
+        foodID <- J.parseJSON x
+        foodData <- J.parseJSON x
+        return RawFood{foodID, foodData}
+
+data RawFoodID = RawFoodID
+    { name :: T.Text,
+      brand :: T.Text, -- Empty if field is absent
+      subbrand :: T.Text -- Empty if field is absent
+    }
+    deriving (Show)
+
+data RawFoodData = RawFoodData
+    { massFracs :: MM.MultiMap T.Text U.MassFraction,
+      energyDensities :: MM.MultiMap T.Text U.EnergyDensity,
+      ius :: MM.MultiMap T.Text Float,
+      unknown :: [(T.Text, T.Text, Float)],
+      malformed :: [T.Text]
+    }
+
+listRawFoodErrs :: RawFood -> T.Text
+listRawFoodErrs (RawFood foodId foodData)
+    | null allErrs = mempty
+    | otherwise = T.unlines $ T.show foodId : allErrs
+  where
+    indent8 :: T.Text -> T.Text
+    indent8 = ("        " <>)
+    malformed =
+        if null foodData.malformed
+            then []
+            else "    nutrients missing both 'amount' and 'median' fields:" : (indent8 <$> foodData.malformed)
+    unknown =
+        if null foodData.unknown
+            then []
+            else "    nutrients with uknown units:" : (indent8 . T.show <$> foodData.unknown)
+    allErrs = malformed ++ unknown
+
+instance J.FromJSON RawFoodID where
+    parseJSON = fmap toRawFoodID . J.parseJSON
       where
-        toRawNutrient :: JSNutrient -> RawNutrient
-        toRawNutrient x =
-            RawNutrient
-                (T.strip x.nutrient.name)
-                (RawQuantity (T.strip x.nutrient.unitName) (x.amount <|> x.median))
-        toRawFood :: JSFood -> RawFood
-        toRawFood x =
-            RawFood
+        toRawFoodID :: JSFood -> RawFoodID
+        toRawFoodID x =
+            RawFoodID
                 { name = T.strip x.description,
                   brand = maybe "" T.strip x.brandName,
-                  subbrand = maybe "" T.strip x.subbrandName,
-                  nutrients = toRawNutrient <$> x.foodNutrients
+                  subbrand = maybe "" T.strip x.subbrandName
                 }
+
+instance J.FromJSON RawFoodData where
+    parseJSON = fmap toRawFoodData . J.parseJSON
+      where
+        toRawFoodData :: JSFood -> RawFoodData
+        toRawFoodData = sortNutrients . fmap fromJSNutrient . (.foodNutrients)
+        fromJSNutrient :: JSNutrient -> (T.Text, P.PolyQuantity)
+        fromJSNutrient n = (name, maybe P.Malformed (parseQty unit) amount)
+          where
+            name = T.strip n.nutrient.name :: T.Text
+            amount = n.amount <|> n.median :: Maybe Float
+            unit = T.strip n.nutrient.unitName :: T.Text
+        sortNutrients :: [(T.Text, P.PolyQuantity)] -> RawFoodData
+        sortNutrients = foldr f (RawFoodData mempty mempty mempty mempty mempty)
+          where
+            f :: (T.Text, P.PolyQuantity) -> RawFoodData -> RawFoodData
+            f (k, P.MassFraction x) s = s{massFracs = MM.insert k x s.massFracs}
+            f (k, P.EnergyDensity x) s = s{energyDensities = MM.insert k x s.energyDensities}
+            f (_, P.SpecificGravity _) s = s -- We don't care about specific gravity
+            f (k, P.InternationalUnit x) s = s{ius = MM.insert k x s.ius}
+            f (k, P.Unknown u x) s = s{unknown = (k, u, x) : s.unknown}
+            f (k, P.Malformed) s = s{malformed = k : s.malformed}
+        -- Parse quantities from the JSON food database.
+        -- They are given in absolute units (e.g. g, mg, kJ), but signify that amount per 100g.
+        parseQty :: T.Text -> Float -> P.PolyQuantity
+        parseQty unit x = case unit of
+            "IU" -> P.InternationalUnit x -- Per 100g.
+            "g" -> P.MassFraction $ x *. U.g_per_100g
+            "kJ" -> P.EnergyDensity $ x *. U.kJ_per_100g
+            "kcal" -> P.EnergyDensity $ x *. U.kcal_per_100g
+            "mg" -> P.MassFraction $ x *. U.mg_per_100g
+            "mg_ATE" -> P.MassFraction $ x *. U.mg_per_100g -- Milligrams of Alpha-Tocopherol Equivalents (Vitamin E)
+            "sp gr" -> P.SpecificGravity x -- Density relative to water: https://en.wikipedia.org/wiki/Relative_density
+            "µg" -> P.MassFraction $ x *. U.ug_per_100g
+            _ -> P.Unknown unit x

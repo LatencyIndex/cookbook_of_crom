@@ -41,7 +41,7 @@ scribeUSDA srcs dst = do
     let results = concatMap parseUSDA files :: [Either CA.ParserError R.RawFood]
         (parseErrs, rawFoods) = partitionEithers results :: ([CA.ParserError], [R.RawFood])
         foods = C.toFood <$> rawFoods :: [(F.FoodID, F.FoodData)]
-        partialErrs = rawFoods >>= R.listRawFoodErrs :: [T.Text]
+        partialErrs = filter (not . T.null) $ R.listRawFoodErrs <$> rawFoods :: [T.Text]
     putStrLn "Parsing errors:"
     mapM_ print parseErrs
     putStrLn "Partial errors:"

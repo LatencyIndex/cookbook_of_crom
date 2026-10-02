@@ -1,47 +1,21 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Ibis.FoodDBs.USDA.Compile.Nutrients (
-    JSNutrientMap,
-    toJSNutrientMap,
     deriveCalories,
     deriveNutrients,
 ) where
 
-import Control.Arrow ((>>>))
 import Crom.Nutrients qualified as N
-import Crom.Units ((*.), (.*.))
+import Crom.Units ((*.), (.*.), (.+.))
 import Crom.Units qualified as U
 import Data.Function (on, (&))
-import Data.List qualified as L
-import Data.List.Extra (firstJust)
+import Data.List.NonEmpty qualified as NE
 import Data.Map.Strict qualified as M
-import Data.Monoid (Sum (..))
+import Data.Maybe (fromMaybe)
 import Data.Ratio ((%))
 import Data.Text qualified as T
-import Ibis.FoodDBs.USDA.Compile.PolyQuantity qualified as P
+import Ibis.Data.MultiMap qualified as MM
 import Ibis.FoodDBs.USDA.Read qualified as R
-
--- | Map from nutrient name to quantity, as present in the JSON food database.
--- One nutrient may have multiple quantities listed.
-type JSNutrientMap = M.Map T.Text [P.PolyQuantity]
-
-toJSNutrientMap :: [R.RawNutrient] -> JSNutrientMap
-toJSNutrientMap =
-    fmap (\x -> (x.name, [x.quantity])) -- split into key-value pairs
-        >>> M.fromListWith (<>) -- create a Map k [v]
-        >>> fmap kcalSort -- sort values by priority
-        >>> fmap (fmap P.fromRawQuantity) -- parse quantities
-  where
-    -- Prioritize kcal, then kJ, then everything else.
-    kcalFirst :: T.Text -> Int
-    kcalFirst "kcal" = 0
-    kcalFirst "kJ" = 1
-    kcalFirst _ = 2
-    kcalSort :: [R.RawQuantity] -> [R.RawQuantity]
-    kcalSort = L.sortOn (kcalFirst . (.unit))
-
-toFirstJust :: (a -> Maybe b) -> M.Map k [a] -> M.Map k b
-toFirstJust f = M.mapMaybe (firstJust f)
 
 -- 'max' picks the best RankedSum
 -- 'mconcat' sums a list of RSums into a RankedSum
@@ -50,6 +24,13 @@ data RankedSum a = RankedSum
       present :: Int, -- Total - missing values.
       value :: a
     }
+
+combineMeasurements :: forall a k. (Ord a, U.QDiv a Float a, U.QSum a) => MM.MultiMap k a -> M.Map k a
+combineMeasurements = fmap avgOfPositive
+  where
+    -- Average of positives values, or zero if there are none.
+    avgOfPositive :: NE.NonEmpty a -> a
+    avgOfPositive = fromMaybe U.zeroQty . U.avgQty . NE.filter (> U.zeroQty)
 
 -- | Singleton for RankedSum.
 rankOne :: a -> RankedSum a
@@ -72,35 +53,35 @@ instance Eq (RankedSum a) where
     (==) = (==) `on` rank
 instance Ord (RankedSum a) where
     compare = compare `on` rank
-instance (Semigroup a) => Semigroup (RankedSum a) where
-    (RankedSum t0 p0 v0) <> (RankedSum t1 p1 v1) = RankedSum (t0 + t1) (p0 + p1) (v0 <> v1)
-instance (Monoid a) => Monoid (RankedSum a) where
-    mempty = RankedSum 0 0 mempty
 
-get :: (Monoid a, Ord k) => M.Map k a -> k -> RankedSum a
-get m k = maybe mempty rankOne (M.lookup k m)
+instance (U.QSum a) => U.QSum (RankedSum a) where
+    (RankedSum t0 p0 v0) .+. (RankedSum t1 p1 v1) = RankedSum (t0 + t1) (p0 + p1) (v0 .+. v1)
+    zeroQty = RankedSum 0 0 U.zeroQty
 
-gets :: (Functor f, Monoid a, Ord k) => M.Map k a -> f k -> f (RankedSum a)
+get :: (Ord k, U.QSum a) => M.Map k a -> k -> RankedSum a
+get m k = maybe U.zeroQty rankOne (M.lookup k m)
+
+gets :: (Functor f, Ord k, U.QSum a) => M.Map k a -> f k -> f (RankedSum a)
 gets m = fmap (get m)
 
-getWeighted :: (Monoid a, Ord k, U.QMul Float a a) => M.Map k a -> (Float, k) -> RankedSum a
+getWeighted :: (Ord k, U.QMul Float a a, U.QSum a) => M.Map k a -> (Float, k) -> RankedSum a
 getWeighted m (w, k) = get m k & fmap (w .*.)
 
-getsWeighted :: (Functor f, Monoid a, Ord k, U.QMul Float a a) => M.Map k a -> f (Float, k) -> f (RankedSum a)
+getsWeighted :: (Functor f, Ord k, U.QMul Float a a, U.QSum a) => M.Map k a -> f (Float, k) -> f (RankedSum a)
 getsWeighted m = fmap (getWeighted m)
 
-sum' :: (Monoid a) => [RankedSum a] -> RankedSum a
-sum' = mconcat
+sum' :: (U.QSum a) => [RankedSum a] -> RankedSum a
+sum' = U.sumQty
 
 -- | Returns the best RankedSum, or the empty RankedSum if the foldable is empty.
-maxRank :: (Foldable f, Monoid a) => f (RankedSum a) -> RankedSum a
-maxRank = foldl' max mempty
+maxRank :: (Foldable f, U.QSum a) => f (RankedSum a) -> RankedSum a
+maxRank = foldl' max U.zeroQty
 
-deriveCalories :: JSNutrientMap -> Maybe U.EnergyDensity
-deriveCalories nutrientMap =
+deriveCalories :: R.RawFoodData -> Maybe U.EnergyDensity
+deriveCalories raw =
     let
         energy :: M.Map T.Text U.EnergyDensity
-        energy = toFirstJust P.toEnergyDensity nutrientMap
+        energy = combineMeasurements raw.energyDensities
      in
         (toValid . maxRank . gets energy)
             [ "Energy", -- Presumably chosen as most accurate by the analysts.
@@ -108,16 +89,16 @@ deriveCalories nutrientMap =
               "Energy (Atwater General Factors)" -- Ignores absorption.
             ]
 
-deriveNutrients :: JSNutrientMap -> M.Map N.Nutrient U.MassFraction
-deriveNutrients nutrientMap =
+deriveNutrients :: R.RawFoodData -> M.Map N.Nutrient U.MassFraction
+deriveNutrients raw =
     let
         mass :: M.Map T.Text U.MassFraction
-        mass = toFirstJust P.toMassFraction nutrientMap
-        iu :: M.Map T.Text (Sum Float)
-        iu = Sum <$> toFirstJust P.toIU nutrientMap
+        mass = combineMeasurements raw.massFracs
+        iu :: M.Map T.Text Float
+        iu = combineMeasurements raw.ius
         -- Convenience function to convert international unit to mass fraction.
-        mmulIU :: U.MassFraction -> RankedSum (Sum Float) -> RankedSum U.MassFraction
-        mmulIU m = fmap ((m .*.) . getSum)
+        mmulIU :: U.MassFraction -> RankedSum Float -> RankedSum U.MassFraction
+        mmulIU m = fmap (m .*.)
      in
         [ -- By summation is a newer and more accurate method than by difference.
           (N.Carbohydrates, (maxRank . gets mass) ["Carbohydrate, by summation", "Carbohydrate, by difference"]),
@@ -136,7 +117,7 @@ deriveNutrients nutrientMap =
           -- Has to be calculated from amino acid makeup.
           -- However, it is not additive, so it is more meaningful to calculate it for an entire
           -- meal/day, than for a single food.
-          (N.CompleteProtein, mempty),
+          -- (N.CompleteProtein, U.zeroQty),
           (N.Element_B, get mass "Boron, B"),
           (N.Element_Ca, get mass "Calcium, Ca"),
           (N.Element_Co, get mass "Cobalt, Co"),
@@ -183,7 +164,7 @@ deriveNutrients nutrientMap =
                   "PUFA 2:4 n-6" -- Probably a typo for 2x:4
                 ]
             ),
-          (N.Omega7, mempty), -- Not in USDA database.
+          -- (N.Omega7, U.zeroQty), -- Not in USDA database.
             ( N.Omega9,
               (sum' . gets mass)
                 [ "MUFA 22:1 n-9", -- Erucic acid
@@ -207,7 +188,7 @@ deriveNutrients nutrientMap =
             ( N.Vitamin_B9,
               get mass "Folate, DFE" -- DFE: Dietary folate equivalent.
                 `max` ( (maxRank . gets mass) ["Folate, total", "Folate, food"] -- Folate presumably does not include folic acid.
-                            <> getWeighted mass (1.7, "Folic acid") -- 1g of folic acid is equivalent to 1.7g DFE.
+                            .+. getWeighted mass (1.7, "Folic acid") -- 1g of folic acid is equivalent to 1.7g DFE.
                       )
             ),
           (N.Vitamin_B12, (sum' . gets mass) ["Vitamin B-12", "Vitamin B-12, added"]),
@@ -243,10 +224,10 @@ deriveNutrients nutrientMap =
           (N.Cholesterol, get mass "Cholesterol"),
           -- In the USDA database, if any form of choline is given, then the choline total is also given.
           -- So we concern ourselves only with the total, and ignore the others.
-          (N.Choline, get mass "Choline, total"),
-          (N.Coenzyme_Q10, mempty), -- Not in USDA database.
-          (N.Collagen, mempty), -- Not in USDA database.
-          (N.Creatine, mempty) -- Not in USDA database.
+          (N.Choline, get mass "Choline, total")
+          -- (N.Coenzyme_Q10, U.zeroQty), -- Not in USDA database.
+          -- (N.Collagen, U.zeroQty), -- Not in USDA database.
+          -- (N.Creatine, U.zeroQty) -- Not in USDA database.
         ]
             & M.fromList
             & M.mapMaybe toValid -- Discard values that have no data points.
