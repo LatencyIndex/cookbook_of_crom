@@ -9,9 +9,7 @@ import Crom.Nutrients qualified as N
 import Crom.Units ((*.), (.*.), (.+.))
 import Crom.Units qualified as U
 import Data.Function (on, (&))
-import Data.List.NonEmpty qualified as NE
 import Data.Map.Strict qualified as M
-import Data.Maybe (fromMaybe)
 import Data.Ratio ((%))
 import Data.Text qualified as T
 import Ibis.Data.MultiMap qualified as MM
@@ -25,12 +23,10 @@ data RankedSum a = RankedSum
       value :: a
     }
 
-combineMeasurements :: forall a k. (Ord a, U.QDiv a Float a, U.QSum a) => MM.MultiMap k a -> M.Map k a
-combineMeasurements = fmap avgOfPositive
-  where
-    -- Average of positives values, or zero if there are none.
-    avgOfPositive :: NE.NonEmpty a -> a
-    avgOfPositive = fromMaybe U.zeroQty . U.avgQty . NE.filter (> U.zeroQty)
+-- Negative/invalid values were already discarded, so combining is a simple average.
+-- Keep zero values, since they may be valid.
+combineMeasurements :: (U.QDiv a Float a, U.QSum a) => MM.MultiMap k a -> M.Map k a
+combineMeasurements = fmap U.avgQtyNE
 
 -- | Singleton for RankedSum.
 rankOne :: a -> RankedSum a
