@@ -12,6 +12,7 @@ module Ibis.FoodDBs.USDA.Read (
 ) where
 
 import Control.Applicative ((<|>))
+import Control.Monad (mfilter)
 import Crom.Units ((*.))
 import Crom.Units qualified as U
 import Data.Aeson.Types qualified as J
@@ -111,7 +112,10 @@ instance J.FromJSON RawFoodData where
         fromJSNutrient n = (name, maybe P.Malformed (parseQty unit) amount)
           where
             name = T.strip n.nutrient.name :: T.Text
-            amount = n.amount <|> n.median :: Maybe Float
+            -- Negative amounts are likely errors.
+            -- They would only sense for anti-nutrients, but I doubt the USDA dataset handles them this way.
+            -- Ideally they would be reported as errors, but silently discarding them suffices.
+            amount = (mfilter (>=0) n.amount) <|> (mfilter (>= 0) n.median) :: Maybe Float
             unit = T.strip n.nutrient.unitName :: T.Text
         sortNutrients :: [(T.Text, P.PolyQuantity)] -> RawFoodData
         sortNutrients = foldr f (RawFoodData mempty mempty mempty mempty mempty)
