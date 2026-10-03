@@ -70,9 +70,6 @@ instance QSub Int where
 instance QSub (Qty a) where
     (Qty x) .-. (Qty y) = Qty (x-y)
 
-instance Semigroup (Qty a) where (<>) = (.+.)
-instance Monoid    (Qty a) where mempty = zeroQty
-
 -- Internal functions for more convenient implementation
 qmul :: Qty a -> Qty b -> Qty c
 qmul (Qty x) (Qty y) = Qty (x*y)
