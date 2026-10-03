@@ -8,7 +8,7 @@ module Ibis.FoodDBs.USDA.Read (
     RawFood (..),
     RawFoodID (..),
     RawFoodData (..),
-    listRawFoodErrs,
+    rawFoodParseErrs,
 ) where
 
 import Control.Applicative ((<|>))
@@ -68,8 +68,8 @@ data RawFoodData = RawFoodData
       malformed :: [T.Text]
     }
 
-listRawFoodErrs :: RawFood -> T.Text
-listRawFoodErrs (RawFood foodId foodData)
+rawFoodParseErrs :: RawFood -> T.Text
+rawFoodParseErrs (RawFood foodId foodData)
     | null allErrs = mempty
     | otherwise = T.unlines $ T.show foodId : allErrs
   where
