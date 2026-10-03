@@ -53,12 +53,6 @@ data RawFood = RawFood
       foodData :: RawFoodData
     }
 
-instance J.FromJSON RawFood where
-    parseJSON x = do
-        foodID <- J.parseJSON x
-        foodData <- J.parseJSON x
-        return RawFood{foodID, foodData}
-
 data RawFoodID = RawFoodID
     { name :: T.Text,
       brand :: T.Text, -- Empty if field is absent
@@ -90,6 +84,12 @@ listRawFoodErrs (RawFood foodId foodData)
             then []
             else "    nutrients with uknown units:" : (indent8 . T.show <$> foodData.unknown)
     allErrs = malformed ++ unknown
+
+instance J.FromJSON RawFood where
+    parseJSON x = do
+        foodID <- J.parseJSON x
+        foodData <- J.parseJSON x
+        return RawFood{foodID, foodData}
 
 instance J.FromJSON RawFoodID where
     parseJSON = fmap toRawFoodID . J.parseJSON
