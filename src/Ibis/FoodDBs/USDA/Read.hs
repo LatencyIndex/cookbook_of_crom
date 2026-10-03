@@ -69,9 +69,9 @@ data RawFoodData = RawFoodData
     }
 
 rawFoodParseErrs :: RawFood -> T.Text
-rawFoodParseErrs (RawFood foodId foodData)
+rawFoodParseErrs (RawFood foodID foodData)
     | null allErrs = mempty
-    | otherwise = T.unlines $ T.show foodId : allErrs
+    | otherwise = T.unlines $ T.show foodID : allErrs
   where
     indent8 :: T.Text -> T.Text
     indent8 = ("        " <>)
