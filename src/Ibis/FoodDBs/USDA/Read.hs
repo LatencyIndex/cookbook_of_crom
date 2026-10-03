@@ -58,7 +58,7 @@ data RawFoodID = RawFoodID
       brand :: T.Text, -- Empty if field is absent
       subbrand :: T.Text -- Empty if field is absent
     }
-    deriving (Show)
+    deriving (Show, Eq, Ord)
 
 data RawFoodData = RawFoodData
     { massFracs :: MM.MultiMap T.Text U.MassFraction,
