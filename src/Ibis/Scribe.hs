@@ -3,7 +3,7 @@ module Ibis.Scribe (
     scribeUSDA,
 ) where
 
-import Conduit (ConduitT, awaitForever, runConduitPure, sinkList, yield, (.|))
+import Conduit (foldlC, runConduitPure, yield, (.|))
 import Crom.Food qualified as F
 import Crom.IO.Zip.Read qualified as ZR
 import Data.ByteString qualified as B
@@ -19,9 +19,9 @@ import Ibis.FoodDBs.USDA.Compile qualified as C
 import Ibis.FoodDBs.USDA.Read qualified as R
 import Ibis.IO.Zip.Write qualified as ZW
 
--- | Force evaluate each element inside Conduit's control flow.
-forceC :: (Monad m) => ConduitT a a m ()
-forceC = awaitForever $ \x -> x `seq` yield x
+-- Force evaluation to prevent memory leak
+forceCons :: [a] -> a -> [a]
+forceCons acc x = x `seq` x : acc
 
 -- | Read a USDA JSON database into a list of RawFoods.
 parseUSDA :: B.ByteString -> [Either CA.ParserError R.RawFood]
@@ -30,9 +30,8 @@ parseUSDA json =
         yield (trimArray json)
             -- Parse directly to RawFood
             .| CA.conduitArrayEither
-            -- Force evaluation to prevent memory leak
-            .| forceC
-            .| sinkList
+            -- Conduit's sinkList is too lazy, and causes a memory leak
+            .| foldlC forceCons []
 
 -- | Create a nutrient database from the given USDA JSON food sources.
 scribeUSDA :: [FilePath] -> FilePath -> IO ()
