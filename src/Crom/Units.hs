@@ -4,10 +4,8 @@
 module Crom.Units (
     Mass, Energy, Time,
     MassFraction, EnergyDensity,
-    QSum, QMul, QDiv,
-    (.*.), (./.),
-    (.+.), (.-.), (*.), (.*), (./),
-    zeroQty, sumQty, avgQty,
+    QSum (..), QSub (..), QMul (..), QDiv (..),
+    (*.), (.*), (./),
     toMFrac, mFracDiv,
     ug, mg, g, kg, lb,
     kJ, kcal,
@@ -42,11 +40,15 @@ class QSum a where
     zeroQty :: a
     sumQty :: (Foldable f) => f a -> a
     sumQty = foldr (.+.) zeroQty
-    -- | Nothing if foldable is empty.
+    -- | Average. Nothing if foldable is empty.
     avgQty :: (Foldable f, QSum a, QDiv a Float a) => f a -> Maybe a
     avgQty xs
         | n > 0 = Just $ sumQty xs ./. (fromIntegral n :: Float)
         | otherwise = Nothing
+        where n = length xs
+    -- | Average.
+    avgQtyNE :: (QSum a, QDiv a Float a) => N.NonEmpty a -> a
+    avgQtyNE xs = sumQty xs ./. (fromIntegral n :: Float)
         where n = length xs
 class QSub a where
     (.-.) :: a -> a -> a
