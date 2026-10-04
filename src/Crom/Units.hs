@@ -15,12 +15,14 @@ module Crom.Units (
 ) where
 
 import qualified Crom.Util.Text as T
+import Data.Binary (Binary)
 import Data.List.NonEmpty (NonEmpty((:|)))
 import qualified Data.List.NonEmpty as N
 import qualified Data.List.NonEmpty.Extra as NE
+import GHC.Generics (Generic)
 
 -- A quantity of dimension a, its value stored in some canonical unit.
-newtype Qty a = Qty {val :: Float} deriving (Show, Read, Eq, Ord)
+newtype Qty a = Qty {val :: Float} deriving (Show, Eq, Ord, Generic, Binary)
 
 -- Dimensions
 data DMass

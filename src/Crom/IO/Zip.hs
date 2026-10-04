@@ -4,16 +4,15 @@ module Crom.IO.Zip (
 ) where
 
 import Codec.Archive.Zip qualified as Z
-import Data.ByteString qualified as B
 import Data.ByteString.Lazy.Char8 qualified as BL
 
 -- | Interpret the input as the contents of a zip archive, and unzip every file inside.
-unzipAll :: B.ByteString -> [B.ByteString]
-unzipAll = fmap (B.toStrict . Z.fromEntry) . Z.zEntries . Z.toArchive . B.fromStrict
+unzipAll :: BL.ByteString -> [BL.ByteString]
+unzipAll = fmap Z.fromEntry . Z.zEntries . Z.toArchive
 
 -- | Create a zip archive containing a single file.
-zipContents :: FilePath -> String -> B.ByteString
-zipContents fileName contents = B.toStrict $ Z.fromArchive archive
+zipContents :: FilePath -> BL.ByteString -> BL.ByteString
+zipContents fileName contents = Z.fromArchive archive
   where
-    entry = Z.toEntry fileName 0 (BL.pack contents)
+    entry = Z.toEntry fileName 0 contents
     archive = Z.addEntryToArchive entry Z.emptyArchive

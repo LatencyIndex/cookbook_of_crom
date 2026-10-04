@@ -1,10 +1,14 @@
+{-# LANGUAGE DeriveAnyClass #-}
+
 module Crom.Calendar (
     Month (..),
     Date,
     perennial,
 ) where
 
+import Data.Binary (Binary)
 import Data.Set qualified as S
+import GHC.Generics (Generic)
 
 data Month
     = Jan
@@ -19,7 +23,7 @@ data Month
     | Oct
     | Nov
     | Dec
-    deriving (Show, Read, Eq, Ord, Enum, Bounded)
+    deriving (Show, Eq, Ord, Enum, Bounded, Generic, Binary)
 
 data Date = Date {year :: Int, month :: Month, day :: Int}
     deriving (Show)

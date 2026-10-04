@@ -41,6 +41,7 @@ executable cookbook-of-crom
         aeson,
         aeson-pretty,
         base,
+        binary,
         bytestring,
         conduit,
         conduit-aeson,

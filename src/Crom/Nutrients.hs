@@ -1,4 +1,9 @@
+{-# LANGUAGE DeriveAnyClass #-}
+
 module Crom.Nutrients where
+
+import Data.Binary (Binary)
+import GHC.Generics (Generic)
 
 -- Nutrients need database with recommended daily dose, etc.
 data Nutrient
@@ -63,4 +68,4 @@ data Nutrient
     | Coenzyme_Q10
     | Collagen
     | Creatine
-    deriving (Show, Read, Eq, Ord)
+    deriving (Show, Eq, Ord, Generic, Binary)

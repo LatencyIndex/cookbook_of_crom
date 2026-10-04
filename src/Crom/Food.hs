@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveAnyClass #-}
+
 module Crom.Food (
     FoodID (..),
     FoodData (..),
@@ -10,17 +12,19 @@ module Crom.Food (
 import Crom.Calendar
 import Crom.Nutrients (Nutrient)
 import Crom.Units
+import Data.Binary (Binary)
 import Data.Map.Strict qualified as M
 import Data.Maybe (fromMaybe)
 import Data.Set qualified as S
 import Data.Text qualified as T
+import GHC.Generics (Generic)
 
 data FoodID = FoodID
     { name :: T.Text,
       brand :: T.Text,
       subbrand :: T.Text
     }
-    deriving (Eq, Ord, Show, Read)
+    deriving (Eq, Ord, Show, Generic, Binary)
 
 -- Generic food, ingredients, or meal/recipe, not tied to a specific product or manufacturer.
 -- E.g. potatoes, eggs, protein powder, tofu, chocolate, vegetable paella, carbonara..
@@ -35,7 +39,7 @@ data FoodData = FoodData
       -- Not necessarily the sum of ingredients, as nutrients can be altered by cooking (e.g. heat destroys vitamin C).
       nutrients :: M.Map Nutrient MassFraction
     }
-    deriving (Show, Read)
+    deriving (Show, Generic, Binary)
 
 type FoodDB = M.Map FoodID FoodData
 

@@ -7,6 +7,7 @@ import Conduit (foldlC, runConduitPure, yield, (.|))
 import Crom.IO.FoodDB qualified as FDB
 import Crom.IO.Zip qualified as Z
 import Data.ByteString qualified as B
+import Data.ByteString.Lazy qualified as BL
 import Data.Conduit.Aeson qualified as CA
 import Data.Either (partitionEithers)
 import Data.Map.Strict qualified as M
@@ -34,8 +35,8 @@ parseUSDA json =
 -- | Create a nutrient database from the given USDA JSON food sources.
 scribeUSDA :: [FilePath] -> FilePath -> IO ()
 scribeUSDA srcs dst = do
-    files <- concatMap Z.unzipAll <$> mapM B.readFile srcs
-    let results = concatMap parseUSDA files :: [Either CA.ParserError R.RawFood]
+    files <- concatMap Z.unzipAll <$> mapM BL.readFile srcs
+    let results = concatMap (parseUSDA . B.toStrict) files :: [Either CA.ParserError R.RawFood]
         (parseErrs, rawFoods) = partitionEithers results :: ([CA.ParserError], [R.RawFood])
         rawFoodsMap = MM.fromList $ (\x -> (x.foodID, x.foodData)) <$> rawFoods
         foodDB = M.fromList $ C.toFood <$> M.toList rawFoodsMap :: FDB.FoodDB
@@ -44,4 +45,4 @@ scribeUSDA srcs dst = do
     mapM_ print parseErrs
     putStrLn "Partial errors:"
     mapM_ TIO.putStrLn partialErrs
-    B.writeFile dst (FDB.encode foodDB)
+    BL.writeFile dst (FDB.encode foodDB)
