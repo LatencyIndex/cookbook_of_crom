@@ -18,7 +18,7 @@ executable cookbook-of-crom
         Crom.Diet
         Crom.Food
         Crom.IO.FoodDB
-        Crom.IO.Zip.Read
+        Crom.IO.Zip
         Crom.Nutrients
         Crom.Units
         Crom.Util.Text
@@ -31,7 +31,6 @@ executable cookbook-of-crom
         Ibis.FoodDBs.USDA.Compile.PolyQuantity
         Ibis.FoodDBs.USDA.Read
         Ibis.FoodDBs.USDA.Research.JSON
-        Ibis.IO.Zip.Write
         Ibis.Scribe
     default-extensions:
         DuplicateRecordFields

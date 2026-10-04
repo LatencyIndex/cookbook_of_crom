@@ -5,21 +5,20 @@ module Crom.IO.FoodDB (
 ) where
 
 import Crom.Food qualified as F
-import Crom.IO.Zip.Read qualified as ZR
+import Crom.IO.Zip qualified as Z
 import Data.ByteString qualified as B
 import Data.ByteString.Lazy.Char8 qualified as BL
 import Data.Map.Strict qualified as M
-import Ibis.IO.Zip.Write as ZW
 
 type FoodDB = M.Map F.FoodID F.FoodData
 
 -- Encode the database into a zip archive.
 encode :: FoodDB -> B.ByteString
-encode = ZW.zipContents "usdaHaskell.txt" . show
+encode = Z.zipContents "usdaHaskell.txt" . show
 
 -- Decode all the databases in a zip archive.
 decodeDB :: B.ByteString -> FoodDB
-decodeDB = M.unions . fmap readDB . ZR.unzipAll
+decodeDB = M.unions . fmap readDB . Z.unzipAll
   where
     -- Read a single unzipped database.
     readDB :: B.ByteString -> FoodDB

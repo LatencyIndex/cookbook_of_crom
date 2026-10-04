@@ -5,7 +5,7 @@ module Ibis.Scribe (
 
 import Conduit (foldlC, runConduitPure, yield, (.|))
 import Crom.IO.FoodDB qualified as FDB
-import Crom.IO.Zip.Read qualified as ZR
+import Crom.IO.Zip qualified as Z
 import Data.ByteString qualified as B
 import Data.Conduit.Aeson qualified as CA
 import Data.Either (partitionEithers)
@@ -34,7 +34,7 @@ parseUSDA json =
 -- | Create a nutrient database from the given USDA JSON food sources.
 scribeUSDA :: [FilePath] -> FilePath -> IO ()
 scribeUSDA srcs dst = do
-    files <- concatMap ZR.unzipAll <$> mapM B.readFile srcs
+    files <- concatMap Z.unzipAll <$> mapM B.readFile srcs
     let results = concatMap parseUSDA files :: [Either CA.ParserError R.RawFood]
         (parseErrs, rawFoods) = partitionEithers results :: ([CA.ParserError], [R.RawFood])
         rawFoodsMap = MM.fromList $ (\x -> (x.foodID, x.foodData)) <$> rawFoods
