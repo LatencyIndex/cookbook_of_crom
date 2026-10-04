@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 
 -- | Module for reading JSON food databases.
@@ -28,7 +29,7 @@ data JSFood = JSFood
       subbrandName :: Maybe T.Text,
       foodNutrients :: [JSNutrient]
     }
-    deriving (Show, Generic)
+    deriving (Show, Generic, J.FromJSON)
 
 -- Use Maybe fields to prevent the whole parse from failing
 -- if either 'amount' or 'median' field is missing.
@@ -37,17 +38,13 @@ data JSNutrient = JSNutrient
       median :: Maybe Float,
       nutrient :: JSNutrientInner
     }
-    deriving (Show, Generic)
+    deriving (Show, Generic, J.FromJSON)
 
 data JSNutrientInner = JSNutrientInner
     { name :: T.Text,
       unitName :: T.Text
     }
-    deriving (Show, Generic)
-
-instance J.FromJSON JSFood
-instance J.FromJSON JSNutrient
-instance J.FromJSON JSNutrientInner
+    deriving (Show, Generic, J.FromJSON)
 
 data RawFood = RawFood
     { foodID :: RawFoodID,
@@ -115,7 +112,7 @@ instance J.FromJSON RawFoodData where
             -- Negative amounts are likely errors.
             -- They would only sense for anti-nutrients, but I doubt the USDA dataset handles them this way.
             -- Ideally they would be reported as errors, but silently discarding them suffices.
-            amount = (mfilter (>=0) n.amount) <|> (mfilter (>= 0) n.median) :: Maybe Float
+            amount = (mfilter (>= 0) n.amount) <|> (mfilter (>= 0) n.median) :: Maybe Float
             unit = T.strip n.nutrient.unitName :: T.Text
         sortNutrients :: [(T.Text, P.PolyQuantity)] -> RawFoodData
         sortNutrients = foldr f (RawFoodData mempty mempty mempty mempty mempty)
