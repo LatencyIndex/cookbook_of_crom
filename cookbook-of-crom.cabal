@@ -17,6 +17,7 @@ executable cookbook-of-crom
         Crom.Calendar
         Crom.Diet
         Crom.Food
+        Crom.IO.FoodDB
         Crom.IO.Zip.Read
         Crom.Nutrients
         Crom.Units

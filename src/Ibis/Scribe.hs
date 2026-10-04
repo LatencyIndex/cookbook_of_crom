@@ -4,7 +4,7 @@ module Ibis.Scribe (
 ) where
 
 import Conduit (foldlC, runConduitPure, yield, (.|))
-import Crom.Food qualified as F
+import Crom.IO.FoodDB qualified as FDB
 import Crom.IO.Zip.Read qualified as ZR
 import Data.ByteString qualified as B
 import Data.Conduit.Aeson qualified as CA
@@ -16,7 +16,6 @@ import Ibis.Data.JSON (trimArray)
 import Ibis.Data.MultiMap qualified as MM
 import Ibis.FoodDBs.USDA.Compile qualified as C
 import Ibis.FoodDBs.USDA.Read qualified as R
-import Ibis.IO.Zip.Write qualified as ZW
 
 -- Force evaluation to prevent memory leak
 forceCons :: [a] -> a -> [a]
@@ -39,10 +38,10 @@ scribeUSDA srcs dst = do
     let results = concatMap parseUSDA files :: [Either CA.ParserError R.RawFood]
         (parseErrs, rawFoods) = partitionEithers results :: ([CA.ParserError], [R.RawFood])
         rawFoodsMap = MM.fromList $ (\x -> (x.foodID, x.foodData)) <$> rawFoods
-        foods = C.toFood <$> M.toList rawFoodsMap :: [(F.FoodID, F.FoodData)]
+        foodDB = M.fromList $ C.toFood <$> M.toList rawFoodsMap :: FDB.FoodDB
         partialErrs = filter (not . T.null) $ R.rawFoodParseErrs <$> rawFoods :: [T.Text]
     putStrLn "Parsing errors:"
     mapM_ print parseErrs
     putStrLn "Partial errors:"
     mapM_ TIO.putStrLn partialErrs
-    B.writeFile dst (ZW.zipContents "usdaHaskell.txt" (show foods))
+    B.writeFile dst (FDB.encode foodDB)
