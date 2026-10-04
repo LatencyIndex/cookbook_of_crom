@@ -8,7 +8,7 @@ import Crom.Food qualified as F
 import Crom.Units qualified as U
 import Data.Bifunctor (bimap)
 import Data.List.NonEmpty qualified as NE
-import Data.Map qualified as M
+import Data.Map.Strict qualified as M
 import Ibis.Data.MultiMap qualified as MM
 import Ibis.FoodDBs.USDA.Compile.Nutrients qualified as N
 import Ibis.FoodDBs.USDA.Read qualified as R

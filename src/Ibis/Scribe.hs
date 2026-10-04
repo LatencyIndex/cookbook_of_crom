@@ -9,7 +9,7 @@ import Crom.IO.Zip.Read qualified as ZR
 import Data.ByteString qualified as B
 import Data.Conduit.Aeson qualified as CA
 import Data.Either (partitionEithers)
-import Data.Map qualified as M
+import Data.Map.Strict qualified as M
 import Data.Text qualified as T
 import Data.Text.IO qualified as TIO
 import Ibis.Data.JSON (trimArray)
