@@ -3,12 +3,13 @@ module Ibis.FoodDBs.GNUtrition.Read (
 ) where
 
 import Control.Monad ((<=<))
-import Crom.Units ((.*.))
+import Crom.Units ((.*))
 import Crom.Units qualified as U
 import Data.Map.Strict qualified as M
-import Data.Maybe (mapMaybe)
+import Data.Maybe (fromMaybe, mapMaybe)
 import Data.Text qualified as T
 import Database.SQLite.Simple qualified as S
+import Ibis.FoodDBs.GNUtrition.DBColumns as Cols
 import Text.Read (readMaybe)
 
 {- How to explore SQL databases:
@@ -25,88 +26,11 @@ Yes, some column names contain line-breaks.
 
 type RowMap = M.Map T.Text T.Text
 
-nameKey :: T.Text
-nameKey = "Main food description"
-
-caloriesKey :: T.Text
-caloriesKey = "Energy (kcal)"
-
-_miscKeys :: [T.Text]
-_miscKeys =
-    [ "Food code",
-      "WWEIA Category number",
-      "WWEIA Category description"
-    ]
-
-nutrientsKeys :: [T.Text]
-nutrientsKeys =
-    [ "Protein (g)",
-      "Carbohydrate (g)",
-      "Sugars, total\n(g)",
-      "Fiber, total dietary (g)",
-      "Total Fat (g)",
-      "Fatty acids, total saturated (g)",
-      "Fatty acids, total monounsaturated (g)",
-      "Fatty acids, total polyunsaturated (g)",
-      "Cholesterol (mg)",
-      "Retinol (mcg)",
-      "Vitamin A, RAE (mcg_RAE)",
-      "Carotene, alpha (mcg)",
-      "Carotene, beta (mcg)",
-      "Cryptoxanthin, beta (mcg)",
-      "Lycopene (mcg)",
-      "Lutein + zeaxanthin (mcg)",
-      "Thiamin (mg)",
-      "Riboflavin (mg)",
-      "Niacin (mg)",
-      "Vitamin B-6 (mg)",
-      "Folic acid (mcg)",
-      "Folate, food (mcg)",
-      "Folate, DFE (mcg_DFE)",
-      "Folate, total (mcg)",
-      "Choline, total (mg)",
-      "Vitamin B-12 (mcg)",
-      "Vitamin B-12, added\n(mcg)",
-      "Vitamin C (mg)",
-      "Vitamin D (D2 + D3) (mcg)",
-      "Vitamin E (alpha-tocopherol) (mg)",
-      "Vitamin E, added\n(mg)",
-      "Vitamin K (phylloquinone) (mcg)",
-      "Calcium (mg)",
-      "Phosphorus (mg)",
-      "Magnesium (mg)",
-      "Iron\n(mg)",
-      "Zinc\n(mg)",
-      "Copper (mg)",
-      "Selenium (mcg)",
-      "Potassium (mg)",
-      "Sodium (mg)",
-      "Caffeine (mg)",
-      "Theobromine (mg)",
-      "Alcohol (g)",
-      "4:0\n(g)",
-      "6:0\n(g)",
-      "8:0\n(g)",
-      "10:0\n(g)",
-      "12:0\n(g)",
-      "14:0\n(g)",
-      "16:0\n(g)",
-      "18:0\n(g)",
-      "16:1\n(g)",
-      "18:1\n(g)",
-      "20:1\n(g)",
-      "22:1\n(g)",
-      "18:2\n(g)",
-      "18:3\n(g)",
-      "18:4\n(g)",
-      "20:4\n(g)",
-      "20:5 n-3\n(g)",
-      "22:5 n-3\n(g)",
-      "22:6 n-3\n(g)",
-      "Water\n(g)"
-    ]
-
-type GNUFoodID = T.Text
+data GNUFoodID = GNUFoodID
+    { name :: T.Text,
+      code :: Maybe Int
+    }
+    deriving (Eq, Ord)
 
 data GNUFoodData = GNUFoodData
     { calories :: Maybe U.EnergyDensity,
@@ -114,8 +38,16 @@ data GNUFoodData = GNUFoodData
     }
     deriving (Show)
 
-parseGNUFoodID :: RowMap -> Maybe GNUFoodID
-parseGNUFoodID = M.lookup nameKey
+-- | Strip text of whitespace, then attempt to read it.
+readStripped :: (Read a) => T.Text -> Maybe a
+readStripped = readMaybe . T.unpack . T.strip
+
+parseGNUFoodID :: RowMap -> GNUFoodID
+parseGNUFoodID xs =
+    GNUFoodID
+        { name = fromMaybe "" (M.lookup Cols.name xs),
+          code = M.lookup Cols.foodCode xs >>= readStripped
+        }
 
 parseGNUFoodData :: RowMap -> GNUFoodData
 parseGNUFoodData xs =
@@ -124,14 +56,11 @@ parseGNUFoodData xs =
           nutrients = parseNutrients xs
         }
 
-readFloat :: T.Text -> Maybe Float
-readFloat = readMaybe . T.unpack . T.strip
-
 parseCalories :: RowMap -> Maybe U.EnergyDensity
-parseCalories = fmap (U.kcal_per_100g .*.) . readFloat <=< M.lookup caloriesKey
+parseCalories = fmap (U.kcal_per_100g .*) . readStripped <=< M.lookup Cols.calories
 
 parseNutrients :: RowMap -> M.Map T.Text U.MassFraction
-parseNutrients xs = M.fromList $ mapMaybe (\k -> (k,) <$> getAmount k) nutrientsKeys
+parseNutrients xs = M.fromList $ mapMaybe (\k -> (k,) <$> getAmount k) Cols.nutrients
   where
     getUnit :: T.Text -> U.MassFraction
     getUnit key
@@ -143,7 +72,7 @@ parseNutrients xs = M.fromList $ mapMaybe (\k -> (k,) <$> getAmount k) nutrients
         -- Should never happen, because all the keys are hardcoded.
         | otherwise = error $ "Unknown unit: " ++ T.unpack key
     parseAmount :: T.Text -> T.Text -> Maybe U.MassFraction
-    parseAmount key val = (getUnit key .*.) <$> readFloat val
+    parseAmount key val = (getUnit key .*) <$> readStripped val
     getAmount :: T.Text -> Maybe U.MassFraction
     getAmount key = M.lookup key xs >>= parseAmount key
 
@@ -163,9 +92,9 @@ loadGNU db = do
     conn <- S.open db
     (xs :: [RowMap]) <- queryKeys "nutrients" requiredCols conn
     S.close conn
-    return $ M.fromList $ mapMaybe parseGNUFood xs
+    return $ M.fromList $ parseGNUFood <$> xs
   where
     requiredCols :: [T.Text]
-    requiredCols = nameKey : caloriesKey : nutrientsKeys
-    parseGNUFood :: RowMap -> Maybe (GNUFoodID, GNUFoodData)
-    parseGNUFood x = (,parseGNUFoodData x) <$> parseGNUFoodID x
+    requiredCols = Cols.name : Cols.foodCode : Cols.calories : Cols.nutrients
+    parseGNUFood :: RowMap -> (GNUFoodID, GNUFoodData)
+    parseGNUFood x = (parseGNUFoodID x, parseGNUFoodData x)
