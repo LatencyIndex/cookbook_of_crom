@@ -1,10 +1,10 @@
 -- | For comparing the USDA and GNUtrition databases for differences or errors.
 module Ibis.FoodDBs.Compare (
     compareDBs,
-    printDelta,
 ) where
 
 import Crom.Food qualified as F
+import Crom.IO.FoodDB qualified as C
 import Crom.Nutrients qualified as N
 import Crom.Units ((*.), (.*), (.*.), (./.))
 import Crom.Units qualified as U
@@ -66,8 +66,8 @@ cmpFoods tol usda gnu = cmpNutrients tol usda.nutrients (toCromNutrients gnu.nut
 
 -- | Match foods by name, and compare their nutrient content.
 -- Nutrients with relative difference < 'tol' are considered equivalent, and omitted from the output.
-compareDBs :: Float -> F.FoodDB -> G.GNUDB -> M.Map T.Text NutrientDeltas
-compareDBs tol usda gnu = M.filter (not . M.null) $ M.intersectionWith (cmpFoods tol) usdaByName gnuByName
+compareDBsPure :: Float -> F.FoodDB -> G.GNUDB -> M.Map T.Text NutrientDeltas
+compareDBsPure tol usda gnu = M.filter (not . M.null) $ M.intersectionWith (cmpFoods tol) usdaByName gnuByName
   where
     usdaByName = M.mapKeys (.name) usda
     gnuByName = M.mapKeys (.name) gnu
@@ -77,3 +77,14 @@ printDelta :: (T.Text, NutrientDeltas) -> IO ()
 printDelta (foodName, xs) = do
     TIO.putStrLn foodName
     mapM_ (\(n, delta) -> putStrLn ("    " ++ show n ++ ": " ++ prettyShow delta)) (M.toList xs)
+
+compareDBs :: Float -> FilePath -> FilePath -> IO ()
+compareDBs tol usdaDB gnuDB = do
+    putStrLn "Loading food DBs.."
+    usdaFoods <- C.load usdaDB
+    gnuFoods <- G.loadGNU gnuDB
+    let deltas = compareDBsPure tol usdaFoods gnuFoods
+    putStrLn $ "usda size:         " ++ show (length usdaFoods)
+    putStrLn $ "gnu size:          " ++ show (length gnuFoods)
+    putStrLn $ "intersection size: " ++ show (length deltas)
+    mapM_ printDelta (M.toList deltas)
