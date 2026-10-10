@@ -10,7 +10,7 @@ module Crom.Food (
 ) where
 
 import Crom.Calendar
-import Crom.Nutrients (Nutrient)
+import Crom.Nutrients (NutrientFractions)
 import Crom.Units
 import Data.Binary (Binary)
 import Data.Map.Strict qualified as M
@@ -37,7 +37,7 @@ data FoodData = FoodData
       calories :: Maybe EnergyDensity, -- Net, after discarding inedible parts. 'Maybe' to handle missing data.
       -- Net, after discarding inedible parts.
       -- Not necessarily the sum of ingredients, as nutrients can be altered by cooking (e.g. heat destroys vitamin C).
-      nutrients :: M.Map Nutrient MassFraction
+      nutrients :: NutrientFractions
     }
     deriving (Show, Generic, Binary)
 
@@ -55,11 +55,11 @@ derive_calories = sumQty . fmap (\(food, frac) -> get_calories food .*. frac)
     get_calories = fromMaybe zeroQty . (.calories)
 
 -- Nutrient fractions of combined ingredients.
-derive_nutrients :: [(FoodData, MassFraction)] -> M.Map Nutrient MassFraction
+derive_nutrients :: [(FoodData, MassFraction)] -> NutrientFractions
 derive_nutrients =
     -- Convert individual foods to their nutrient fractions, then sum.
     foldr (M.unionWith (.+.) . nutrients_in_food) M.empty
   where
     -- Nutrient fractions in one food fraction.
-    nutrients_in_food :: (FoodData, MassFraction) -> M.Map Nutrient MassFraction
+    nutrients_in_food :: (FoodData, MassFraction) -> NutrientFractions
     nutrients_in_food (food, frac) = (frac .*.) <$> food.nutrients

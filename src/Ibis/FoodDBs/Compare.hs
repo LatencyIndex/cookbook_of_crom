@@ -31,10 +31,9 @@ instance PrettyShow MassDelta where
             ++ showSigDigits 2 x.relDelta
 
 type NutrientDeltas = M.Map N.Nutrient MassDelta
-type NutrientMap = M.Map N.Nutrient U.MassFraction
 
 -- | Translate from GNUtrition's nutrients, to Crom nutrients.
-toCromNutrients :: M.Map T.Text U.MassFraction -> NutrientMap
+toCromNutrients :: M.Map T.Text U.MassFraction -> N.NutrientFractions
 toCromNutrients xs = M.mapMaybe wsum Cols.equivalences
   where
     -- Lookup mass fraction and apply weight in one step.
@@ -59,7 +58,7 @@ cmpMassFracs x y = MassDelta x y <$> relativeDelta (x ./. U.g_per_100g) (y ./. U
 
 -- | List all the nutrients that differ by more than tolerance (tol).
 -- E.g. if tol = 0.02, they must differ by > 2%
-cmpNutrients :: Float -> NutrientMap -> NutrientMap -> M.Map N.Nutrient MassDelta
+cmpNutrients :: Float -> N.NutrientFractions -> N.NutrientFractions -> M.Map N.Nutrient MassDelta
 cmpNutrients tol l r = M.filter (\x -> x.relDelta > tol) $ M.mapMaybe id $ M.intersectionWith cmpMassFracs l r
 
 cmpFoods :: Float -> F.FoodData -> G.GNUFoodData -> M.Map N.Nutrient MassDelta

@@ -1,8 +1,13 @@
 {-# LANGUAGE DeriveAnyClass #-}
 
-module Crom.Nutrients where
+module Crom.Nutrients (
+    Nutrient(..),
+    NutrientFractions,
+) where
 
 import Data.Binary (Binary)
+import Data.Map.Strict qualified as M
+import Crom.Units
 import GHC.Generics (Generic)
 
 -- Nutrients need database with recommended daily dose, etc.
@@ -69,3 +74,5 @@ data Nutrient
     | Collagen
     | Creatine
     deriving (Show, Eq, Ord, Generic, Binary)
+
+type NutrientFractions = M.Map Nutrient MassFraction

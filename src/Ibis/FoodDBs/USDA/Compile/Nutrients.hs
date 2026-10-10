@@ -85,7 +85,7 @@ deriveCalories raw =
               "Energy (Atwater General Factors)" -- Ignores absorption.
             ]
 
-deriveNutrients :: R.RawFoodData -> M.Map N.Nutrient U.MassFraction
+deriveNutrients :: R.RawFoodData -> N.NutrientFractions
 deriveNutrients raw =
     let
         mass :: M.Map T.Text U.MassFraction
