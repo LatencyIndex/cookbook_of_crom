@@ -15,18 +15,6 @@ import Database.SQLite.Simple qualified as S
 import Ibis.FoodDBs.GNUtrition.DBColumns as Cols
 import Text.Read (readMaybe)
 
-{- How to explore SQL databases:
-Open the DB with
-    > sqlite3 -readonly food.db
-List all tables with
-    > .tables
-Show the column names and types of a table with
-    > .schema <table name>
-A slightly nicer list of column names:
-    > PRAGMA table_info(table_name);
-Yes, some column names contain line-breaks.
--}
-
 type RowMap = M.Map T.Text T.Text
 
 data GNUFoodID = GNUFoodID
