@@ -52,6 +52,7 @@ instance Ord (RankedSum a) where
     compare = compare `on` rank
 
 -- | 'max' that picks the left argument in a tie.
+
 {- HLINT ignore maxl "Use max" -}
 maxl :: (Ord a) => a -> a -> a
 maxl l r = if l < r then r else l
@@ -176,9 +177,10 @@ deriveNutrients raw =
           -- Dosage equivalents at https://en.wikipedia.org/wiki/Vitamin_A#Units_of_measurement
           -- Dietary recommendations given in RAE (retinol activity equivalent)
             ( N.Vitamin_A,
-              -- 3.33 IU of vitamin A is equivalent to 1 microgram of RAE
-              (((1 / 3.33) *. U.ug_per_100g) `mmulIU` get iu "Vitamin A, IU")
-                `maxl` get mass "Vitamin A, RAE"
+              -- Presumably RAE means that this is the most comprehensive quantity.
+              get mass "Vitamin A, RAE"
+                -- 3.33 IU of vitamin A is equivalent to 1 microgram of RAE
+                `maxl` (((1 / 3.33) *. U.ug_per_100g) `mmulIU` get iu "Vitamin A, IU")
                 `maxl` (sum' . getsWeighted mass) [(1, "Retinol"), (1 / 24, "Cryptoxanthin, beta")]
             ),
           (N.Vitamin_B1, get mass "Thiamin"),
@@ -191,7 +193,7 @@ deriveNutrients raw =
               get mass "Folate, DFE" -- DFE: Dietary folate equivalent.
                 `maxl` ( (maxRank . gets mass) ["Folate, total", "Folate, food"] -- Folate presumably does not include folic acid.
                             .+. getWeighted mass (1.7, "Folic acid") -- 1g of folic acid is equivalent to 1.7g DFE.
-                      )
+                       )
             ),
           (N.Vitamin_B12, (sum' . gets mass) ["Vitamin B-12", "Vitamin B-12, added"]),
           (N.Vitamin_C, get mass "Vitamin C, total ascorbic acid"),
