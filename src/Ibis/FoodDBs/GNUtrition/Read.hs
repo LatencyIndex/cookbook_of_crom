@@ -1,4 +1,7 @@
 module Ibis.FoodDBs.GNUtrition.Read (
+    GNUFoodID (..),
+    GNUFoodData (..),
+    GNUDB,
     loadGNU,
 ) where
 
@@ -87,7 +90,9 @@ queryKeys table keys conn = fmap toMap <$> S.query_ conn query
     toMap :: [T.Text] -> RowMap
     toMap = M.fromList . zip keys
 
-loadGNU :: FilePath -> IO (M.Map GNUFoodID GNUFoodData)
+type GNUDB = M.Map GNUFoodID GNUFoodData
+
+loadGNU :: FilePath -> IO GNUDB
 loadGNU db = do
     conn <- S.open db
     (xs :: [RowMap]) <- queryKeys "nutrients" requiredCols conn
