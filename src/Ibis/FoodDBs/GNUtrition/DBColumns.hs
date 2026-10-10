@@ -8,6 +8,7 @@ module Ibis.FoodDBs.GNUtrition.DBColumns (
 ) where
 
 import Crom.Nutrients qualified as N
+import Data.Map.Strict qualified as M
 import Data.Text qualified as T
 
 name :: T.Text
@@ -26,8 +27,8 @@ _miscKeys =
     ]
 
 -- | Nutrients as tracked by Crom, and the weighted sum of GNUtrition nutrients it corresponds to.
-equivalences :: [(N.Nutrient, [(Float, T.Text)])]
-equivalences = [
+equivalences :: M.Map N.Nutrient [(Float, T.Text)]
+equivalences = M.fromList [
     (N.Carbohydrates,       [(1, "Carbohydrate (g)")]),
     (N.Sugars,              [(1, "Sugars, total\n(g)")]),
     (N.Fat,                 [(1, "Total Fat (g)")]),
@@ -132,4 +133,4 @@ ignored = [
 
 -- | All nutrient keys/columns names, used by GNUtrition.
 nutrients :: [T.Text]
-nutrients = concatMap (fmap snd . snd) equivalences ++ ignored
+nutrients = concatMap (fmap snd) (M.elems equivalences) ++ ignored
