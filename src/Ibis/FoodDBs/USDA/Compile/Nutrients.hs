@@ -15,7 +15,8 @@ import Data.Text qualified as T
 import Ibis.Data.MultiMap qualified as MM
 import Ibis.FoodDBs.USDA.Read qualified as R
 
--- 'max' picks the best RankedSum
+-- 'max' picks the best RankedSum, but picks the right argument in a tie.
+-- To pick prefer the left argument in a tie, use 'maxl'.
 -- 'mconcat' sums a list of RSums into a RankedSum
 data RankedSum a = RankedSum
     { total :: Int, -- Total number of values that were supposed to form this sum.
@@ -50,6 +51,11 @@ instance Eq (RankedSum a) where
 instance Ord (RankedSum a) where
     compare = compare `on` rank
 
+-- | 'max' that picks the left argument in a tie.
+{- HLINT ignore maxl "Use max" -}
+maxl :: (Ord a) => a -> a -> a
+maxl l r = if l < r then r else l
+
 instance (U.QSum a) => U.QSum (RankedSum a) where
     (RankedSum t0 p0 v0) .+. (RankedSum t1 p1 v1) = RankedSum (t0 + t1) (p0 + p1) (v0 .+. v1)
     zeroQty = RankedSum 0 0 U.zeroQty
@@ -71,7 +77,7 @@ sum' = U.sumQty
 
 -- | Returns the best RankedSum, or the empty RankedSum if the foldable is empty.
 maxRank :: (Foldable f, U.QSum a) => f (RankedSum a) -> RankedSum a
-maxRank = foldl' max U.zeroQty
+maxRank = foldl' maxl U.zeroQty
 
 deriveCalories :: R.RawFoodData -> Maybe U.EnergyDensity
 deriveCalories raw =
@@ -172,8 +178,8 @@ deriveNutrients raw =
             ( N.Vitamin_A,
               -- 3.33 IU of vitamin A is equivalent to 1 microgram of RAE
               (((1 / 3.33) *. U.ug_per_100g) `mmulIU` get iu "Vitamin A, IU")
-                `max` get mass "Vitamin A, RAE"
-                `max` (sum' . getsWeighted mass) [(1, "Retinol"), (1 / 24, "Cryptoxanthin, beta")]
+                `maxl` get mass "Vitamin A, RAE"
+                `maxl` (sum' . getsWeighted mass) [(1, "Retinol"), (1 / 24, "Cryptoxanthin, beta")]
             ),
           (N.Vitamin_B1, get mass "Thiamin"),
           (N.Vitamin_B2, get mass "Riboflavin"),
@@ -183,7 +189,7 @@ deriveNutrients raw =
           (N.Vitamin_B7, get mass "Biotin"),
             ( N.Vitamin_B9,
               get mass "Folate, DFE" -- DFE: Dietary folate equivalent.
-                `max` ( (maxRank . gets mass) ["Folate, total", "Folate, food"] -- Folate presumably does not include folic acid.
+                `maxl` ( (maxRank . gets mass) ["Folate, total", "Folate, food"] -- Folate presumably does not include folic acid.
                             .+. getWeighted mass (1.7, "Folic acid") -- 1g of folic acid is equivalent to 1.7g DFE.
                       )
             ),
@@ -193,8 +199,8 @@ deriveNutrients raw =
             ( N.Vitamin_D,
               get mass "Vitamin D (D2 + D3)"
                 -- For vitamin D, 1 microgram = 40 IU
-                `max` (((1 / 40) *. U.ug_per_100g) `mmulIU` get iu "Vitamin D (D2 + D3), International Units")
-                `max` (sum' . gets mass) ["Vitamin D2 (ergocalciferol)", "Vitamin D3 (cholecalciferol)"]
+                `maxl` (((1 / 40) *. U.ug_per_100g) `mmulIU` get iu "Vitamin D (D2 + D3), International Units")
+                `maxl` (sum' . gets mass) ["Vitamin D2 (ergocalciferol)", "Vitamin D3 (cholecalciferol)"]
             ),
             ( N.Vitamin_E,
               (sum' . gets mass)
